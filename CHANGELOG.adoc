@@ -10,6 +10,30 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Added
 
+* Julia package `CoprocessorRuntime` (uuid
+  `54e4c7d3-acab-5c3f-ab09-6ee0d181492b`): session contracts, tropical
+  resource grades, echo residues, epistemic receipts, CNO/OND claims,
+  choreographic projection with `kcut = :open`, and `HubCeilingRefusal`.
+* `docs/theory/TYPE-INFORMED-BACKENDS.adoc` — what was taken from the
+  `-type` repos and what was deliberately not forced.
+* `docs/ecosystem/HYPERPOLYMATH-WIRING.adoc` — exact sibling-repo patches
+  (Hyperpolymath.jl cannot be pushed from this session).
+* `docs/status/HYPATIA-GATE.adoc` — why the CodeRabbit compare has no
+  merge-base, and which CI reds this tree can actually fix.
+* `.github/workflows/julia-ci.yml` (format / JET / Test+Aqua on 1.9 and 1).
+
+==== Fixed
+
+* Reverted Dependabot's `codeql-action` 4.38.1 pin to v4.38.0
+  (`b96794f`), which is what `actions.lock` already recorded. 4.38.1 is
+  blocked estate-wide (nexia-list#100) and was the `startup_failure` on
+  PR #1.
+* Reverted `haskell-actions/setup` v2.12.1 → v2.12.0 to match the lock.
+* Hypatia caller now passes `secrets: inherit`. This does not cure a
+  hypatia@HEAD build failure (estate-wide after hypatia#863).
+
+==== Inherited from template
+
 * `www/` site-operations bundle (issue #53): canonical `.well-known/`
   metadata, publishable content, policy sources, error bodies,
   security-header templates, Caddy/nginx/Apache integration examples, an

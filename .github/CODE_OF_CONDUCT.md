@@ -12,10 +12,10 @@ Replace all {{PLACEHOLDER}} values:
   rsr-template-repo     - Your project name
   hyperpolymath            - GitHub/GitLab username or org
   rsr-template-repo             - Repository name
-  {{CONDUCT_EMAIL}}    - Email for conduct reports
-  {{CONDUCT_TEAM}}     - Name of conduct team/committee
-  {{RESPONSE_TIME}}    - Initial response SLA (e.g., 48 hours)
-  {{CURRENT_YEAR}}     - Current year
+  j.d.a.jewell@open.ac.uk    - Email for conduct reports
+  Jonathan D.A. Jewell     - Name of conduct team/committee
+  7 days    - Initial response SLA (e.g., 48 hours)
+  2026     - Current year
 
 Review and customise:
 - Adjust enforcement ladder for your community size
@@ -140,7 +140,7 @@ If you experience or witness unacceptable behaviour, or have any other concerns,
 
 | Method | Details | Best For |
 |--------|---------|----------|
-| **Email** | {{CONDUCT_EMAIL}} | Detailed reports, sensitive matters |
+| **Email** | j.d.a.jewell@open.ac.uk | Detailed reports, sensitive matters |
 | **Private Message** | Contact any maintainer directly | Quick questions, minor issues |
 
 **What to Include**
@@ -155,8 +155,8 @@ If you experience or witness unacceptable behaviour, or have any other concerns,
 
 **What Happens Next**
 
-1. You will receive acknowledgment within **{{RESPONSE_TIME}}**
-2. The {{CONDUCT_TEAM}} will review the report
+1. You will receive acknowledgment within **7 days**
+2. The Jonathan D.A. Jewell will review the report
 3. We may ask for additional information
 4. We will determine appropriate action
 5. We will inform you of the outcome (respecting others' privacy)
@@ -172,7 +172,7 @@ All reports will be handled with discretion:
 
 ### Conflicts of Interest
 
-If the {{CONDUCT_TEAM}} are themselves involved in an incident:
+If the Jonathan D.A. Jewell are themselves involved in an incident:
 
 - They will recuse themselves from the process
 - Another maintainer or external party will handle the report
@@ -182,7 +182,7 @@ If the {{CONDUCT_TEAM}} are themselves involved in an incident:
 
 ## Enforcement Guidelines
 
-The {{CONDUCT_TEAM}} will follow these guidelines in determining consequences:
+The Jonathan D.A. Jewell will follow these guidelines in determining consequences:
 
 ### 1. Correction
 
@@ -242,13 +242,13 @@ For contributors with elevated access (Perimeter 2 or 1):
 If you believe an enforcement decision was made in error:
 
 1. **Wait 7 days** after the decision (cooling-off period)
-2. **Email** {{CONDUCT_EMAIL}} with subject line "Appeal: [Original Report ID]"
+2. **Email** j.d.a.jewell@open.ac.uk with subject line "Appeal: [Original Report ID]"
 3. **Explain** why you believe the decision should be reconsidered
 4. **Provide** any new information not previously available
 
 **Appeals Process**
 
-- Appeals are reviewed by the {{CONDUCT_TEAM}}, excluding anyone involved in the original
+- Appeals are reviewed by the Jonathan D.A. Jewell, excluding anyone involved in the original
 - You will receive a response within 14 days
 - The appeals decision is final
 - You may only appeal once per incident
@@ -322,7 +322,7 @@ We thank these communities for their leadership in creating welcoming spaces.
 If you have questions about this Code of Conduct:
 
 - Open a [Discussion](https://github.com/hyperpolymath/rsr-template-repo/discussions) (for general questions)
-- Email {{CONDUCT_EMAIL}} (for private questions)
+- Email j.d.a.jewell@open.ac.uk (for private questions)
 - Contact any maintainer directly
 
 ---
@@ -335,4 +335,4 @@ We're all here because we care about this project. Let's make it a place where e
 
 ---
 
-<sub>Last updated: {{CURRENT_YEAR}} · Based on Contributor Covenant 2.1</sub>
+<sub>Last updated: 2026 · Based on Contributor Covenant 2.1</sub>

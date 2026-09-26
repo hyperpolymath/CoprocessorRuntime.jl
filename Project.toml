@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: MPL-2.0
+# minted by: arena/01a0de6b-coprocessorruntime-jl (2026)
+# owner: hyperpolymath
+#
+# uuid is UUIDv5(repo-uuid, "julia:CoprocessorRuntime.jl") where
+# repo-uuid = UUIDv5(URL namespace, "github.com/hyperpolymath/CoprocessorRuntime.jl")
+
+name = "CoprocessorRuntime"
+uuid = "54e4c7d3-acab-5c3f-ab09-6ee0d181492b"
+description = "Coprocessor support base library for Julia — session contracts, tropical grades, echo residues, epistemic receipts, CNO/OND claims. Not a kernel runtime."
+authors = ["Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>"]
+license = "MPL-2.0"
+version = "0.1.0"
+
+[deps]
+
+[extras]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "Aqua"]
+
+[compat]
+julia = "1.9"
+Test = "1.9"
+Aqua = "0.8"

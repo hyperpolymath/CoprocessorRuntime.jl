@@ -12,7 +12,7 @@
   :repo-uuid #u5"github.com/hyperpolymath/rsr-template-repo"
   (manifest
     :version "0.1.0"
-    :last-updated "{{CURRENT_DATE}}"
+    :last-updated "2026-09-26"
     :project "[YOUR-REPO-NAME]"
     :purpose "Canonical RSR (Rhodium Standard Repository) template — governance, CI/CD, machine-readable metadata, ABI/FFI seam and formal-verification scaffolding that hyperpolymath projects are instantiated from."
     (agent :name CLAUDE :role "proofs, compilers, repo-local implementation, CI/CD, formal verification, Rust/Idris2/Zig")

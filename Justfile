@@ -19,9 +19,9 @@ set positional-arguments := true
 import? "build/contractile.just"
 
 # Project metadata — customize these
-project := "rsr-template-repo"
+project := "CoprocessorRuntime.jl"
 OWNER := "hyperpolymath"
-REPO := "rsr-template-repo"
+REPO := "CoprocessorRuntime.jl"
 version := "0.1.0"
 tier := "infrastructure"  # 1 | 2 | infrastructure
 

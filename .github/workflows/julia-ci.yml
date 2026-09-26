@@ -1,12 +1,13 @@
-# {{PROJECT_NAME}} — Julia CI (julia-library archetype)
+# This workflow is managed by gh actions-lock.
+# SPDX-License-Identifier: MPL-2.0
+# CoprocessorRuntime — Julia CI (julia-library archetype)
 #
 # Pin posture (estate ruling R2, 2026-09-02; D38/D39 resolution 2026-09-19):
 # symbolic refs here, pinned by .github/workflows/actions.lock (same dir).
-# Refs resolved 2026-09-19 against the estate estate-pins:
+# Refs resolved 2026-09-26:
 #   actions/checkout@v7.0.1        = 3d3c42e5aac5ba805825da76410c181273ba90b1
 #   julia-actions/setup-julia@v3.0.2 = fa02766e078afaaf09b14210362cee14137e6a32
-#   julia-actions/cache@v2         = a7bed9df697e5d7309d68afe7542a87621a8b6c8
-# Regenerate the lock in the SAME PR as any uses: change (estate MUST).
+#   julia-actions/cache@v2         = d10a6fd8f31b12404a54613ebad242900567f2b9
 
 name: Julia CI
 
@@ -15,9 +16,13 @@ on:
     branches: [main, master]
   pull_request:
 
-# No `continue-on-error` on a MUST check (R1–R9): a red job is the gate
-# working. Coverage (R4) is reported by the estate's standard coverage
-# upload where present; it is not a blocker at template level.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   fmt:
     name: Format (JuliaFormatter)
@@ -69,9 +74,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The [compat] floor IS tested — an untested floor is an unproven
-        # floor (measured estate gap: Axiology-class repos declare julia 1.9
-        # but test 1.10/1.11 only).
         julia: ["1.9", "1"]
         os: [ubuntu-latest]
     steps:

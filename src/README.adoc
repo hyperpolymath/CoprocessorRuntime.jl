@@ -1,3 +1,23 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= src Pillar
+= src/
+
+Julia package root for `CoprocessorRuntime`.
+
+[cols="1,3"]
+|===
+| File | Role
+
+| `CoprocessorRuntime.jl` | Module + includes + exports
+| `Kinds.jl` | Roles and coprocessor kinds
+| `Grades.jl` | Tropical resource grades
+| `EchoLoss.jl` | Transfer maps and echo residues
+| `Sessions.jl` | Host-side session handles
+| `Receipts.jl` | Epistemic launch receipts
+| `Nullity.jl` | CNO/OND claims and Janus inversion metadata
+| `Choreography.jl` | Launch plans, projection, hub_ceiling refusal
+|===
+
+The RSR ABI/FFI seam under `src/interface/` is inherited from the template
+and is not yet wired to this package. Do not treat Idris/Zig files as the
+Julia API.

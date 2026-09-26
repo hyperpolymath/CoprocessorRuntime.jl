@@ -1,0 +1,119 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Wiring CoprocessorRuntime.jl into the Julia estate
+:toc:
+
+This session can only push `hyperpolymath/CoprocessorRuntime.jl`. The patches
+below are the exact edits for sibling repos. They are not applied here.
+
+== Hyperpolymath.jl (linking directory)
+
+Hyperpolymath.jl is the metapackage. It already re-exports the metal layer
+(`LowLevel`, `SiliconCore`, `AcceleratorGate`, `QuantumCircuit`,
+`HardwareResilience`, `FirmwareAudit`) and does **not** yet name this package.
+
+Generate a fresh UUID-compat line using this package's published uuid
+`54e4c7d3-acab-5c3f-ab09-6ee0d181492b`.
+
+=== `Project.toml`
+
+Add to `[deps]`:
+
+----
+CoprocessorRuntime = "54e4c7d3-acab-5c3f-ab09-6ee0d181492b"
+----
+
+Add to `[compat]`:
+
+----
+CoprocessorRuntime = "0.1"
+----
+
+Until this package is in the General registry, Hyperpolymath.jl consumers
+must `Pkg.add(url="https://github.com/hyperpolymath/CoprocessorRuntime.jl")`
+before `Pkg.add` of the metapackage, or Hyperpolymath.jl should document the
+url-dep.
+
+=== `src/Hyperpolymath.jl`
+
+In section 7 (The Metal Layer), after `using AcceleratorGate`:
+
+[source,julia]
+----
+using CoprocessorRuntime
+----
+
+In the `export` list, next to `AcceleratorGate`:
+
+[source,julia]
+----
+export CoprocessorRuntime
+----
+
+Do **not** flatten CoprocessorRuntime's names into Hyperpolymath. The
+metapackage currently exports module names, not every symbol. Keep that.
+
+=== README / TOPOLOGY
+
+Add CoprocessorRuntime under the metal layer, *below* AcceleratorGate
+(selection) and *beside* HardwareResilience (fallback):
+
+----
+AcceleratorGate.jl     — which backend exists / select
+CoprocessorRuntime.jl  — session, launch plan, grades, residues, receipts
+HardwareResilience.jl  — fallback when a launch reports a fault
+SiliconCore.jl         — CPU feature detection
+LowLevel.jl            — should consume CoprocessorRuntime, not duplicate it
+FirmwareAudit.jl       — firmware attestation as an epistemic warrant source
+----
+
+== AcceleratorGate.jl
+
+No hard dependency either way. Optional later: a package extension
+`AcceleratorGateExt` in *this* repo mapping `AbstractBackend` →
+`CoprocessorKind`. Not in v0.1: AcceleratorGate backends are env-flag
+stubs, and a forced extension would look like integration that is not
+there.
+
+Suggested mapping when the extension is written:
+
+----
+JuliaBackend / RustBackend / ZigBackend → CPUKind
+CUDABackend / ROCmBackend / MetalBackend → GPUKind
+TPUBackend → TPUKind
+NPUBackend → NPUKind
+FPGABackend → FPGAKind
+QPUBackend → QPUKind
+DSPBackend → DSPKind
+----
+
+== EchoTypes.jl / EpistemicTypes.jl
+
+Optional, not required.
+
+* EchoTypes.jl can *compute* a finite fibre; CoprocessorRuntime only
+  *records* that a map was collapsing. A future extension could attach an
+  `EchoWitness` to `EchoResidue.fiber_note`.
+* EpistemicTypes.jl receipts are taxonomic (standpoint/warrant/projection
+  per row). CoprocessorRuntime receipts are launch-scoped. Do not merge the
+  types; they answer different questions. Protoctist.jl already composes
+  EpistemicTypes without a hard dep — copy that pattern.
+
+== LowLevel.jl
+
+LowLevel.jl's README currently claims "Universal Coprocessor Support".
+That claim is the Protocol Squisher position `hub_ceiling` refutes.
+The honest rewire: LowLevel *uses* `CoprocessorRuntime.launch_plan` /
+`universal_hub_allowed` and keeps vendor kernels in its own modules.
+That edit is a LowLevel.jl PR, not this one.
+
+== QuantumCircuit.jl
+
+Natural consumer for `QPUKind` sessions and OND claims (a circuit that
+must not leak the secret register to a host observer). No dep in v0.1.
+
+== FirmwareAudit.jl
+
+A firmware attestation is an epistemic *warrant*, not knowledge, until a
+soundness check. FirmwareAudit should issue `LaunchReceipt`s with
+`warrant = WarrantOnly` unless verification actually ran.

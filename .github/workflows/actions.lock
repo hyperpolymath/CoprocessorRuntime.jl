@@ -38,6 +38,10 @@ workflows:
         - 'actions/checkout@v7.0.1'
     '.github/workflows/hypatia-scan.yml':
         - 'hyperpolymath/standards@da2c748aad55c1a1dcba00b60fe4a35017bc6540'
+    '.github/workflows/julia-ci.yml':
+        - 'actions/checkout@v7.0.1'
+        - 'julia-actions/cache@v2'
+        - 'julia-actions/setup-julia@v3.0.2'
     '.github/workflows/k9-validate.yml':
         - 'actions/checkout@v7.0.1'
         - 'hyperpolymath/k9-ecosystem@main'
@@ -243,6 +247,16 @@ dependencies:
         commit: 'sha1-22e7bdb322c430c1d0dac6b3bb307f4bb139d0be'
         owner_id: 6759885
         repo_id: 1352485172
+    'julia-actions/cache@v2':
+        ref: 'v2'
+        commit: 'sha1-d10a6fd8f31b12404a54613ebad242900567f2b9'
+        owner_id: 53965732
+        repo_id: 441908600
+    'julia-actions/setup-julia@v3.0.2':
+        ref: 'v3.0.2'
+        commit: 'sha1-fa02766e078afaaf09b14210362cee14137e6a32'
+        owner_id: 53965732
+        repo_id: 202020219
     'hyperpolymath/standards@da2c748aad55c1a1dcba00b60fe4a35017bc6540':
         ref: 'da2c748aad55c1a1dcba00b60fe4a35017bc6540'
         commit: 'sha1-da2c748aad55c1a1dcba00b60fe4a35017bc6540'
