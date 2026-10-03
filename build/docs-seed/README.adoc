@@ -30,8 +30,8 @@ carried the un-filled seed *and* the spine's own rendered docs side by side.
   `docs/legal/`, which `build/just/validate.just` requires). This README is not
   copied. The seed directory is then removed from your repo alongside
   `archetypes/` and `build/templates/`.
-. **Automatic** — `{{PROJECT_NAME}}`, `{{OWNER}}`, `{{AUTHOR}}`,
-  `{{AUTHOR_EMAIL}}` and `{{CURRENT_YEAR}}` are rendered by the same
+. **Automatic** — `CoprocessorRuntime`, `hyperpolymath`, `Jonathan D.A. Jewell`,
+  `j.d.a.jewell@open.ac.uk` and `2026` are rendered by the same
   substitution pass as the rest of the tree.
 . **Yours to do** — delete any section that genuinely does not apply. Do not
   leave empty scaffolding: the 2026-05-26 doc-debt audit counted 61 estate

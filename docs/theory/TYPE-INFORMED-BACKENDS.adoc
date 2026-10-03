@@ -1,0 +1,86 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Type-informed coprocessor backends
+:toc:
+
+This note records what was *actually useful* from the hyperpolymath `-type`
+repos when designing `CoprocessorRuntime.jl`, and what was left where it
+belongs. Nothing here is a proof transport. Dashed arrows in
+https://github.com/hyperpolymath/nextgen-typing[nextgen-typing] remain
+conceptual.
+
+== Taken (runtime-shaped, not forced)
+
+[cols="1,3,2"]
+|===
+| Source | What landed here | What did *not* land
+
+| https://github.com/hyperpolymath/choreographic-types[choreographic-types]
+| `HostRole` / `DeviceRole`, `LaunchPlan`, `project`. A launch is a global
+  protocol projected to endpoints. `kcut = :open` on every non-injective cut.
+| K-CUT itself. The conjecture is open; a Julia `NamedTuple` is not a closing
+  argument. Degenerate injective maps report `grade_eq = true` as the known
+  base case, nothing more.
+
+| https://github.com/hyperpolymath/tropical-types[tropical-types]
+| `ResourceGrade` with sequential `+` and alternative `max`. Unstated energy
+  (`0.0`) cannot dominate a stated energy. `universal_hub_allowed()` throws
+  `HubCeilingRefusal` — the runtime form of `hub_ceiling`.
+| Lean `ResourceSemiring`, infinite tropical carriers, Mathlib-free proofs.
+  Echo is not a resource instance (their `Resource.EchoBridge`); grades and
+  residues are separate types here too.
+
+| https://github.com/hyperpolymath/echo-types[echo-types]
+| `TransferMap` + `EchoResidue`. Collapsing maps (quantise, reduce) are
+  marked non-injective and irreversible. Round-trips are not identities.
+| Fibres as Σ-types, OFS, Shannon-separation, funext-qualified uniqueness.
+  https://github.com/hyperpolymath/EchoTypes.jl[`EchoTypes.jl`] already runs
+  the finite executable companion. We record a note, we do not replay Agda.
+
+| https://github.com/hyperpolymath/epistemic-types[epistemic-types]
+| Standpoint-indexed `LaunchReceipt`. Knowledge is factive; a device
+  standpoint cannot be rewritten as host `Knowledge` without `sound=true`
+  (refused). This is no-smuggling across the PCIe/trust cut.
+| Full warrant calculus, tropical-graded access, Agda proof transport.
+  https://github.com/hyperpolymath/EpistemicTypes.jl[`EpistemicTypes.jl`] is
+  the taxonomic receipts companion; we do not depend on it.
+
+| https://github.com/hyperpolymath/absolute-zero[absolute-zero]
+| `CNOClaim` (null effect, conserved: state) and `ONDClaim` (null disclosure,
+  conserved: secret→observable channel, with a residue list of out-of-scope
+  observables). Default status `:unproved`.
+| Coq/Lean/Agda/Z3 proofs, OND-6 (open by design), Landauer formalisation.
+  A handle flip is `:model_checked` at most.
+
+| https://github.com/hyperpolymath/januskey[januskey]
+| `InverseMeta`: operations carry their inverse, or are explicitly
+  `irreversible` and must sit next to an echo residue. Secure obliteration
+  is *not* modelled — it is the exception, not the default.
+| Content-addressed file log, Rust CLI, pending reversibility proofs.
+|===
+
+== Looked at, not taken
+
+* https://github.com/hyperpolymath/residual-evidence-types[residual-evidence-types]
+  — candidate worlds over an observation. Useful later for "which device
+  states are compatible with this host read", but the Agda core is still
+  presence-without-identification. Forcing it now would fake a checker.
+* https://github.com/hyperpolymath/epistemic-types[epistemic-types] tropical
+  bridge from standpoint access to echo residues — a research obligation,
+  not a dispatch rule.
+* LowLevel.jl's "universal coprocessor" framing — contradicted by
+  `hub_ceiling`. This package is the narrower seam so LowLevel can consume
+  contracts instead of re-advertising a hub.
+
+== Design rule
+
+If a `-type` result is a *proved prohibition* (hub_ceiling, no-smuggling,
+echo ≠ resource grade, CNO ⟂ OND), it becomes a runtime refusal or a
+separated type.
+
+If a result is an *open conjecture* (K-CUT, OND-6), it becomes an explicit
+`:open` / `:unproved` field, never a silent success.
+
+If a result is a *mechanised library in another prover*, we do not reimplement
+it in Julia and call it a proof. EchoTypes.jl already states that discipline;
+we follow it.

@@ -51,7 +51,7 @@ If you cannot use GitHub Security Advisories, you may email us directly:
 
 | | |
 |---|---|
-| **Email** | {{SECURITY_EMAIL}} |
+| **Email** | j.d.a.jewell@open.ac.uk |
 
 This mailbox is not encrypted. For anything sensitive enough to need
 encryption, prefer GitHub Security Advisories above — the report stays private
@@ -366,7 +366,7 @@ When using rsr-template-repo, we recommend:
 
 | Purpose | Contact |
 |---------|---------|
-| **Security issues** | [Report via GitHub](https://github.com/hyperpolymath/rsr-template-repo/security/advisories/new) or {{SECURITY_EMAIL}} |
+| **Security issues** | [Report via GitHub](https://github.com/hyperpolymath/rsr-template-repo/security/advisories/new) or j.d.a.jewell@open.ac.uk |
 | **General questions** | [GitHub Discussions](https://github.com/hyperpolymath/rsr-template-repo/discussions) |
 | **Other enquiries** | See [README](../README.adoc) for contact information |
 
@@ -386,4 +386,4 @@ This security policy may be updated from time to time. Significant changes will 
 
 ---
 
-<sub>Last updated: {{CURRENT_YEAR}} · Policy version: 1.0.0</sub>
+<sub>Last updated: 2026 · Policy version: 1.0.0</sub>

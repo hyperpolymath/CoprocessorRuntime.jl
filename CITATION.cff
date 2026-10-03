@@ -6,12 +6,14 @@ authors:
     orcid: "https://orcid.org/0000-0002-3078-6652"
 title: "{{PROJECT_NAME}}"
 version: 0.1.0
-date-released: "{{CURRENT_DATE}}"
-url: "https://{{FORGE}}/{{OWNER}}/{{REPO}}"
-repository-code: "https://{{FORGE}}/{{OWNER}}/{{REPO}}"
+date-released: "2026-09-26"
+url: "https://github.com/hyperpolymath/CoprocessorRuntime.jl"
+repository-code: "https://github.com/hyperpolymath/CoprocessorRuntime.jl"
 license: MPL-2.0
 keywords:
-  - "rsr"
-  - "formal-verification"
-  - "neurosymbolic"
+  - "julia"
+  - "coprocessor"
+  - "runtime-contracts"
+  - "tropical-grades"
+  - "echo-types"
   - "provenance"
