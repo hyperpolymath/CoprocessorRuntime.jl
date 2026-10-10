@@ -59,7 +59,7 @@ jobs:
       - uses: julia-actions/setup-julia@v3.0.2
         with:
           version: "1"
-      - uses: julia-actions/cache@v2
+      - uses: julia-actions/cache@v3
       - name: JET.test_package
         run: |
           julia --project=. -e '
@@ -81,6 +81,6 @@ jobs:
       - uses: julia-actions/setup-julia@v3.0.2
         with:
           version: ${{ matrix.julia }}
-      - uses: julia-actions/cache@v2
+      - uses: julia-actions/cache@v3
       - name: Pkg.test()
         run: julia --project=. -e 'using Pkg; Pkg.test()'
