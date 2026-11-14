@@ -39,6 +39,7 @@ erl_crash.dump
 *.jl.cov
 *.jl.mem
 /Manifest.toml
+/test/ext/Manifest.toml
 
 # 
 /lib/bs/

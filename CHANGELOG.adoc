@@ -14,6 +14,13 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   contracts, tropical resource grades, echo residues, epistemic receipts,
   CNO/OND claims, choreographic projection with `kcut = :open`, and
   `HubCeilingRefusal`.
+* Package extension `AcceleratorGateExt` and `coprocessor_kind`: maps an
+  AcceleratorGate.jl `AbstractBackend` onto the `CoprocessorKind` a session
+  is opened against. `PPUBackend`, `MathBackend`, `VPUBackend` and
+  `CryptoBackend` map to `UnknownKind` because there is no kind for them
+  here. AcceleratorGate stays a weak dependency (`[weakdeps]`, compat
+  `0.1`). The extension is tested in `test/ext` against a pinned
+  AcceleratorGate commit, which needs Julia 1.11 (Broken on older Julia).
 * `docs/theory/TYPE-INFORMED-BACKENDS.adoc` — what was taken from the
   `-type` repos and what was deliberately not forced.
 * `docs/ecosystem/HYPERPOLYMATH-WIRING.adoc` — exact sibling-repo patches

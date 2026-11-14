@@ -49,7 +49,7 @@ export Role, HostRole, DeviceRole,
        InverseMeta, inversion_of, irreversible,
        Endpoint, LaunchPlan, launch_plan, project, projected_grade,
        universal_hub_allowed, HubCeilingRefusal,
-       kind_label
+       kind_label, coprocessor_kind
 
 include("Kinds.jl")
 include("Grades.jl")
