@@ -27,6 +27,17 @@ struct LaunchPlan
     endpoints::Vector{Endpoint}
     grade::ResourceGrade
     loss::EchoResidue
+
+    # Typed inner constructor (see `ONDClaim`): ill-typed input is rejected
+    # at the boundary instead of deep inside `convert`.
+    function LaunchPlan(
+        global_name::Symbol,
+        endpoints::Vector{Endpoint},
+        grade::ResourceGrade,
+        loss::EchoResidue,
+    )
+        new(global_name, endpoints, grade, loss)
+    end
 end
 
 function launch_plan(
@@ -51,13 +62,13 @@ function project(plan::LaunchPlan, role::Role)
     local_eps = Endpoint[e for e in plan.endpoints if typeof(e.role) === typeof(role)]
     injective = plan.loss.map.injective
     (
-        role=role,
-        endpoints=local_eps,
-        grade=plan.grade,
-        loss=plan.loss,
-        grade_eq=injective,
-        warrant_bound=injective ? :degenerate_base : :open,
-        kcut=:open,
+        role = role,
+        endpoints = local_eps,
+        grade = plan.grade,
+        loss = plan.loss,
+        grade_eq = injective,
+        warrant_bound = injective ? :degenerate_base : :open,
+        kcut = :open,
     )
 end
 
@@ -89,9 +100,5 @@ protocol would be the Protocol Squisher claim that `hub_ceiling` refutes.
 Callers who need a backend use AcceleratorGate selection, not a hub.
 """
 function universal_hub_allowed()
-    throw(
-        HubCeilingRefusal(
-            "hub_ceiling: no universal coprocessor adapter",
-        ),
-    )
+    throw(HubCeilingRefusal("hub_ceiling: no universal coprocessor adapter"))
 end
