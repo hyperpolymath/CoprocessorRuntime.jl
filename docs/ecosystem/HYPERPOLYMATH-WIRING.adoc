@@ -12,15 +12,23 @@ Hyperpolymath.jl is the metapackage. It already re-exports the metal layer
 (`LowLevel`, `SiliconCore`, `AcceleratorGate`, `QuantumCircuit`,
 `HardwareResilience`, `FirmwareAudit`) and does **not** yet name this package.
 
-Generate a fresh UUID-compat line using this package's published uuid
-`54e4c7d3-acab-5c3f-ab09-6ee0d181492b`.
+Generate a fresh UUID-compat line using this package's uuid
+`30bdb74d-6d6a-8e6d-a17e-2d6824776af8`. It is the UUIDv8 re-mint of the
+package identity (ADR-008 amendment D320), profile C, domain
+`julia-package-identity`, name
+`github.com/hyperpolymath/CoprocessorRuntime.jl`, so it can be recomputed with
+`bun scripts/uuid-v8.js c julia-package-identity github.com/hyperpolymath/CoprocessorRuntime.jl`
+in standards. The mint-time UUIDv5 is in git history. A new uuid is a different
+package to a Julia registry; this package is not in General (checked
+2026-11-14), and a code search of the default branches visible that day found
+no consumer of the old id. The patches below were never applied.
 
 === `Project.toml`
 
 Add to `[deps]`:
 
 ----
-CoprocessorRuntime = "54e4c7d3-acab-5c3f-ab09-6ee0d181492b"
+CoprocessorRuntime = "30bdb74d-6d6a-8e6d-a17e-2d6824776af8"
 ----
 
 Add to `[compat]`:
@@ -69,13 +77,15 @@ FirmwareAudit.jl       — firmware attestation as an epistemic warrant source
 
 == AcceleratorGate.jl
 
-No hard dependency either way. Optional later: a package extension
-`AcceleratorGateExt` in *this* repo mapping `AbstractBackend` →
-`CoprocessorKind`. Not in v0.1: AcceleratorGate backends are env-flag
-stubs, and a forced extension would look like integration that is not
-there.
+No hard dependency either way. The package extension `AcceleratorGateExt`
+(`ext/AcceleratorGateExt.jl`, in *this* repo, loaded when both packages are)
+adds the methods of `coprocessor_kind`, mapping `AbstractBackend` →
+`CoprocessorKind`, so a session can be opened against the kind a backend
+selection produced. AcceleratorGate backends are env-flag selections, so the
+mapping records a *kind*; it does not detect a device or run anything.
 
-Suggested mapping when the extension is written:
+The mapping, which `test/ext/runtests.jl` states a second time and checks
+against every `AbstractBackend` subtype:
 
 ----
 JuliaBackend / RustBackend / ZigBackend → CPUKind
@@ -85,7 +95,17 @@ NPUBackend → NPUKind
 FPGABackend → FPGAKind
 QPUBackend → QPUKind
 DSPBackend → DSPKind
+PPUBackend / MathBackend / VPUBackend / CryptoBackend → UnknownKind
 ----
+
+The last row is a decision: CoprocessorRuntime has no kind for those four
+backends, and adding one is an API change here, not a guess in the extension.
+A backend AcceleratorGate adds later makes the extension's test fail until it
+is given a row.
+
+AcceleratorGate is not in the General registry, so the extension's tests fetch
+it by URL from a pinned commit (`test/ext/Project.toml`, `[sources]`), which
+needs Julia 1.11. On older Julia the test is recorded as Broken, not dropped.
 
 == EchoTypes.jl / EpistemicTypes.jl
 

@@ -83,7 +83,8 @@ export Role,
     projected_grade,
     universal_hub_allowed,
     HubCeilingRefusal,
-    kind_label
+    kind_label,
+    coprocessor_kind
 
 include("Kinds.jl")
 include("Grades.jl")

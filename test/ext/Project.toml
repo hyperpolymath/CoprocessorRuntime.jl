@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: MPL-2.0
+# Test environment for the AcceleratorGateExt package extension. AcceleratorGate
+# is not in the General registry, so it is fetched by URL from a pinned commit
+# through [sources], which needs Julia 1.11. test/runtests.jl runs this
+# environment in a subprocess and records a visible Broken test on older Julia.
+[deps]
+AcceleratorGate = "59f742c7-270d-4a76-95d4-a853ae16cc71"
+CoprocessorRuntime = "30bdb74d-6d6a-8e6d-a17e-2d6824776af8"
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[sources]
+AcceleratorGate = {url = "https://github.com/hyperpolymath/AcceleratorGate.jl", rev = "9b8919326ef3b7cd31424e24041325cc3689b182"}
+CoprocessorRuntime = {path = "../.."}
+
+[compat]
+julia = "1.11"
