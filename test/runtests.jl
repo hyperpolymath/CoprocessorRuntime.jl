@@ -29,8 +29,11 @@ using CoprocessorRuntime
             @info "AcceleratorGateExt tests need Julia 1.11 ([sources]); running Julia $VERSION"
             @test_skip false
         else
-            script = "import Pkg; Pkg.instantiate(); include(joinpath(\"$ext_dir\", \"runtests.jl\"))"
-            cmd = `$(Base.julia_cmd()) --startup-file=no --project=$ext_dir -e $script`
+            # The directory is passed as an argument and read from ARGS, never
+            # spliced into the generated source: a path with a backslash (any
+            # Windows path), a quote or a `$` is not valid inside a string literal.
+            script = "import Pkg; Pkg.instantiate(); include(joinpath(ARGS[1], \"runtests.jl\"))"
+            cmd = `$(Base.julia_cmd()) --startup-file=no --project=$ext_dir -e $script $ext_dir`
             # Pkg.test sets JULIA_LOAD_PATH for the sandbox it makes; the
             # subprocess must resolve its own environment, not inherit that one.
             @test success(
