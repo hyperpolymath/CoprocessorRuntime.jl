@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 // Template: QUICKSTART-DEV.adoc — clone → build → test → PR
-// Replace rsr-template-repo, julia --project=. -e 'using Pkg; Pkg.instantiate()', julia --project=. -e 'using Pkg; Pkg.test()', Julia (1.9+) with actuals
+// Replace rsr-template-repo, julia --project=. -e 'using Pkg; Pkg.instantiate()', julia --project=. -e 'using Pkg; Pkg.test()', Julia (1.10+) with actuals
 = rsr-template-repo — Quick Start for Developers
 :toc:
 :toclevels: 2
 
 == Tech Stack
 
-Julia (1.9+)
+Julia (1.10+)
 
 == Set Up Development Environment
 

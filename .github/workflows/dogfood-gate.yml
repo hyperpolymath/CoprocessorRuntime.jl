@@ -404,12 +404,18 @@ jobs:
           # ephemeral MERGE commit, which is not on the remote and would 404.
           # The event's head sha is the commit that actually exists there.
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # The repository that owns HEAD_SHA: the PR's head repo (a fork's commit
+          # is not on the base repo), else this repo. It was hard-coded to
+          # hyperpolymath/rsr-template-repo, so in every repo minted from the
+          # template the SHA 404ed there and the job always failed with
+          # "no rsr-profile.a2ml" no matter what the profile said.
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
         run: |
           set -euo pipefail
           PROFILE="$RUNNER_TEMP/rsr-profile.a2ml"
           fetched=""
           for p in ".machine_readable/rsr-profile.a2ml" "machine-readable/rsr-profile.a2ml"; do
-            URL="https://raw.githubusercontent.com/hyperpolymath/rsr-template-repo/${HEAD_SHA}/${p}"
+            URL="https://raw.githubusercontent.com/${HEAD_REPO}/${HEAD_SHA}/${p}"
             if curl -fsSL --retry 3 --max-time 30 "$URL" -o "$PROFILE" 2>/dev/null; then
               fetched="$p"; break
             fi
