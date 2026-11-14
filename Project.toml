@@ -2,11 +2,15 @@
 # minted by: arena/01a0de6b-coprocessorruntime-jl (2026)
 # owner: hyperpolymath
 #
-# uuid is UUIDv5(repo-uuid, "julia:CoprocessorRuntime.jl") where
-# repo-uuid = UUIDv5(URL namespace, "github.com/hyperpolymath/CoprocessorRuntime.jl")
+# uuid below is the UUIDv8 re-mint of the package identity (ADR-008
+# amendment D320: an unregistered Julia package's own uuid re-mints as
+# version 8), minted with the estate generator (standards'
+# scripts/uuid-v8.js, profile T) on 2026-11-14. It supersedes the mint-time
+# UUIDv5 literal (in git history; not spelled out here because the strict
+# UUIDv8 scanner reads every hyphenated literal, comments included).
 
 name = "CoprocessorRuntime"
-uuid = "54e4c7d3-acab-5c3f-ab09-6ee0d181492b"
+uuid = "01a1d947-ed2c-8570-92fa-1871a655abc1"
 description = "Coprocessor support base library for Julia — session contracts, tropical grades, echo residues, epistemic receipts, CNO/OND claims. Not a kernel runtime."
 authors = ["Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>"]
 license = "MPL-2.0"

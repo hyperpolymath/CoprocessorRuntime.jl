@@ -12,15 +12,18 @@ Hyperpolymath.jl is the metapackage. It already re-exports the metal layer
 (`LowLevel`, `SiliconCore`, `AcceleratorGate`, `QuantumCircuit`,
 `HardwareResilience`, `FirmwareAudit`) and does **not** yet name this package.
 
-Generate a fresh UUID-compat line using this package's published uuid
-`54e4c7d3-acab-5c3f-ab09-6ee0d181492b`.
+Generate a fresh UUID-compat line using this package's uuid
+`01a1d947-ed2c-8570-92fa-1871a655abc1`. It is the UUIDv8 re-mint of the
+package identity (ADR-008 amendment D320); the mint-time UUIDv5 is in git
+history. A code search of the default branches visible on 2026-11-14 found
+no consumer of the old id; the patches below were never applied.
 
 === `Project.toml`
 
 Add to `[deps]`:
 
 ----
-CoprocessorRuntime = "54e4c7d3-acab-5c3f-ab09-6ee0d181492b"
+CoprocessorRuntime = "01a1d947-ed2c-8570-92fa-1871a655abc1"
 ----
 
 Add to `[compat]`:
