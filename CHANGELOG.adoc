@@ -48,6 +48,12 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 * Reverted `haskell-actions/setup` v2.12.1 → v2.12.0 to match the lock.
 * Hypatia caller now passes `secrets: inherit`. This does not cure a
   hypatia@HEAD build failure (estate-wide after hypatia#863).
+* `Knowledge`, `Belief`, `WarrantOnly` and `Unsound` are now exported. The
+  README, the wiring doc and the receipts tests all write
+  `warrant=WarrantOnly` unqualified, but only the enum type `WarrantKind`
+  was exported, so `Pkg.test()` failed with
+  `UndefVarError: WarrantOnly not defined` (42 passed, 1 errored; now 46
+  of 46 pass).
 
 ==== Inherited from template
 
