@@ -30,6 +30,8 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   leg failed before any test and the repository claimed a version CI never
   tested.
 
+* `docs/onboarding/QUICKSTART-DEV.adoc` states Julia 1.10+, matching the floor.
+
 ==== Fixed
 
 * `julia-ci.yml` Format step: it called `filter` over an uncollected
