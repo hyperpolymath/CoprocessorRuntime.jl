@@ -104,7 +104,7 @@ surfaces any left unfilled.
 |---|---|---|---|
 | `CoprocessorRuntime` | Package / module name (slug) | `my-project` | docs/onboarding/QUICKSTART-MAINTAINER.adoc |
 | `{{DESCRIPTION}}` | Short repo description (forge metadata) | `A tool for X` | .github/settings.yml |
-| `Julia (1.9+)` | Language / toolchain stack | `Idris2 + Zig` | docs/onboarding/QUICKSTART-DEV.adoc |
+| `Julia (1.10+)` | Language / toolchain stack | `Idris2 + Zig` | docs/onboarding/QUICKSTART-DEV.adoc |
 | `julia --project=. -e 'using Pkg; Pkg.instantiate()'` | Build command | `just build` | docs/onboarding/QUICKSTART-DEV.adoc |
 | `julia --project=. -e 'using Pkg; Pkg.test()'` | Test command | `just test` | docs/onboarding/QUICKSTART-DEV.adoc |
 | `src/` | Build artefact output path | `build/` | docs/onboarding/QUICKSTART-MAINTAINER.adoc |
