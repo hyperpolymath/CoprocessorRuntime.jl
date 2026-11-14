@@ -74,8 +74,8 @@ Construct an OND claim. Callers must list out-of-scope observables in
 function observe_null(
     secret::Symbol,
     observer::Symbol;
-    residue::Vector{Symbol}=Symbol[],
-    status::Symbol=:unproved,
+    residue::Vector{Symbol} = Symbol[],
+    status::Symbol = :unproved,
 )
     status in (:unproved, :model_checked) ||
         throw(ArgumentError("OND status must be :unproved or :model_checked, got $status"))
