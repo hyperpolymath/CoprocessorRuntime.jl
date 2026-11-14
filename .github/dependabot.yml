@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: MPL-2.0
-# Dependabot configuration for RSR-compliant repositories
-# Covers common ecosystems - remove unused ones for your project
+# Dependabot configuration for CoprocessorRuntime.jl (julia-library archetype).
+#
+# Only ecosystems this repository has a manifest for. The template shipped
+# cargo/mix/npm/pip entries; with no Cargo.toml, mix.exs, package.json or
+# requirements.txt here, each weekly run failed ("pip in /.", "npm_and_yarn in /.",
+# "hex in /."). Add an ecosystem back only together with its manifest.
 
 version: 2
 updates:
@@ -14,19 +18,6 @@ updates:
         patterns:
           - "*"
     open-pull-requests-limit: 2
-
-  # Rust/Cargo
-  #
-  # `open-pull-requests-limit: 0` suppresses routine version-update PRs
-  # (no weekly patch-bump noise) while leaving Dependabot SECURITY PRs
-  # flowing. Under GitHub's current Dependabot behaviour (2024+), using
-  # an `ignore:` rule with `version-update:semver-patch` would ALSO
-  # silence security PRs that happen to be patch-level — historically
-  # the cause of estate-wide vulns sitting un-PR'd for weeks.
-  # `open-pull-requests-limit: 0` is the GitHub-endorsed way to say
-  # "security only, not routine bumps". Pair with the
-  # dependabot-automerge.yml workflow for low-touch security
-  # maintenance.
     ignore:
       # HOLD: github/codeql-action at v4.38.0 (SHA-pinned). v4.38.1 fails
       # GitHub workflow-startup validation estate-wide (nexia-list#100;
@@ -35,34 +26,8 @@ updates:
       # newer release verifies green; revisit deliberately.
       - dependency-name: "github/codeql-action"
 
-  - package-ecosystem: "cargo"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 0
-
-  # Elixir/Mix
-  - package-ecosystem: "mix"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 3
-    groups:
-      dependency-updates:
-        patterns: ["*"]
-
-  # Node.js/npm
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 3
-    groups:
-      dependency-updates:
-        patterns: ["*"]
-
-  # Python/pip
-  - package-ecosystem: "pip"
+  # Julia (Project.toml compat entries)
+  - package-ecosystem: "julia"
     directory: "/"
     schedule:
       interval: "weekly"
