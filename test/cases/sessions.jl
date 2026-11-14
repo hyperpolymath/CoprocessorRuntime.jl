@@ -12,7 +12,7 @@
     @test isopen(s)
     close_session!(s)
     @test_throws ArgumentError reset_session!(s)
-    ond = observe_null(:weights, :host; residue=[:thermal, :em_sidechannel])
+    ond = observe_null(:weights, :host; residue = [:thermal, :em_sidechannel])
     @test ond.status === :unproved
     @test ond.residue == [:thermal, :em_sidechannel]
     @test irreversible(:reduce).inverse === nothing

@@ -30,18 +30,14 @@ end
 
 function issue_receipt(
     session::Session;
-    standpoint::Symbol=:host,
-    warrant::WarrantKind=WarrantOnly,
-    claim::AbstractString="",
-    sound::Bool=false,
+    standpoint::Symbol = :host,
+    warrant::WarrantKind = WarrantOnly,
+    claim::AbstractString = "",
+    sound::Bool = false,
 )
     isopen(session) || throw(ArgumentError("session $(session.id) is closed"))
     if standpoint === :device && warrant === Knowledge && !sound
-        throw(
-            ArgumentError(
-                "device Knowledge without a soundness check is smuggling",
-            ),
-        )
+        throw(ArgumentError("device Knowledge without a soundness check is smuggling"))
     end
     LaunchReceipt(session.id, standpoint, warrant, String(claim), sound)
 end
