@@ -74,6 +74,7 @@ tests/
 ?sonar-project.properties  # only where the repo is analysed by SonarCloud
 ?benches/                  # Cargo-conventional at package root
 ?examples/                 # Cargo-conventional at package root
+?ext/                      # Julia package extensions: Julia loads an [extensions] entry from ext/ at the package root, so it cannot move; present only where Project.toml declares one
 ?features/                 # optional feature packs
 ?verification/             # proofs; only where formal-proofs is declared
 ?CONTRIBUTING.md           # accepted at root OR .github/; .github/ is the canonical estate location
