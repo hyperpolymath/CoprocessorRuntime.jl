@@ -27,10 +27,50 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   (Hyperpolymath.jl cannot be pushed from this session).
 * `docs/status/HYPATIA-GATE.adoc` — why the CodeRabbit compare has no
   merge-base, and which CI reds this tree can actually fix.
-* `.github/workflows/julia-ci.yml` (format / JET / Test+Aqua on 1.9 and 1).
+* `.github/workflows/julia-ci.yml` (format / JET / Test+Aqua on 1.10 and 1).
+
+==== Changed
+
+* *Breaking:* the minimum Julia is now 1.10 (`julia = "1.10"` in `[compat]`),
+  and CI's oldest leg is 1.10. The 1.9 leg could not run: `setup-julia`
+  installed 1.9.4 and the runner could not load its `libopenlibm.so`, so the
+  leg failed before any test and the repository claimed a version CI never
+  tested.
+
+* `docs/onboarding/QUICKSTART-DEV.adoc` states Julia 1.10+, matching the floor.
 
 ==== Fixed
 
+* `julia-ci.yml` Format step: it called `filter` over an uncollected
+  `Iterators.Flatten` (a `MethodError`), used `format_string` (not in
+  JuliaFormatter 2), and read every file in `src/`, including
+  `src/README.adoc`, which is not Julia. It now collects the list, uses
+  `format_text`, and checks only `*.jl` files.
+* `ONDClaim` and `LaunchPlan` now have typed inner constructors. The default
+  ones accepted `Any` and converted to the field types, which JET 0.13 on Julia
+  1.13 reported as five possible errors (`convert` into `Vector{Symbol}` and
+  `Vector{Endpoint}`), so the JET job was red on the "1" runner. Callers that
+  already pass the declared types (`observe_null`, `launch_plan`, the tests)
+  are unaffected; a direct call with a different vector type, such as
+  `Vector{Any}`, is now a `MethodError` at the call instead of a conversion.
+* `julia-ci.yml` JET step: it passed `path=` and `julia_version=`, which
+  `JET.test_package` does not take; it now passes the package module.
+* Seven files that JuliaFormatter flagged are formatted (the syntax tree of
+  each is identical before and after).
+* `docs/governance/TEMPLATE-STANDARDS-AUDIT.adoc`: the first table row had five
+  cells in a six-column table, which made asciidoctor drop cells and failed
+  `Every tracked .adoc renders clean`. The missing "Expected path" cell is now
+  `-`. This was hidden behind the root-shape failure and red on `main` too.
+* Root allowlist (`.machine_readable/root-allow.txt`) now fits a Julia package:
+  it permits `Project.toml` and `test/` (Pkg requires both names at the root)
+  and requires this repository's own deed, `CoprocessorRuntime.jl_chora.deed`,
+  instead of the template's `rsr-template-repo_chora.deed`. `estate-rules` was
+  red on `main` for exactly these entries.
+* `.github/dependabot.yml` listed cargo, mix, npm and pip, none of which this
+  repository has a manifest for, so every weekly Dependabot run for them failed
+  (8 of the last 10 dynamic runs). Those four are removed and the `julia`
+  ecosystem is added for `Project.toml`; the `github-actions` entry and its
+  codeql-action hold are unchanged.
 * Reverted Dependabot's `codeql-action` 4.38.1 pin to v4.38.0
   (`b96794f`), which is what `actions.lock` already recorded. 4.38.1 is
   blocked estate-wide (nexia-list#100) and was the `startup_failure` on
