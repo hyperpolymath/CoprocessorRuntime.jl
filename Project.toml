@@ -4,13 +4,16 @@
 #
 # uuid below is the UUIDv8 re-mint of the package identity (ADR-008
 # amendment D320: an unregistered Julia package's own uuid re-mints as
-# version 8), minted with the estate generator (standards'
-# scripts/uuid-v8.js, profile T) on 2026-11-14. It supersedes the mint-time
-# UUIDv5 literal (in git history; not spelled out here because the strict
-# UUIDv8 scanner reads every hyphenated literal, comments included).
+# version 8). It is profile C, domain julia-package-identity, name
+# github.com/hyperpolymath/CoprocessorRuntime.jl, so it is reproducible:
+#   bun scripts/uuid-v8.js c julia-package-identity github.com/hyperpolymath/CoprocessorRuntime.jl
+# (standards' scripts/uuid-v8.js), minted 2026-11-14 on an explicit owner
+# ruling for this one id. It supersedes the mint-time UUIDv5 literal (in git
+# history; not spelled out here because the strict UUIDv8 scanner reads every
+# hyphenated literal, comments included).
 
 name = "CoprocessorRuntime"
-uuid = "01a1d947-ed2c-8570-92fa-1871a655abc1"
+uuid = "30bdb74d-6d6a-8e6d-a17e-2d6824776af8"
 description = "Coprocessor support base library for Julia — session contracts, tropical grades, echo residues, epistemic receipts, CNO/OND claims. Not a kernel runtime."
 authors = ["Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>"]
 license = "MPL-2.0"

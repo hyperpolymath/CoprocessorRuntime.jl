@@ -13,17 +13,22 @@ Hyperpolymath.jl is the metapackage. It already re-exports the metal layer
 `HardwareResilience`, `FirmwareAudit`) and does **not** yet name this package.
 
 Generate a fresh UUID-compat line using this package's uuid
-`01a1d947-ed2c-8570-92fa-1871a655abc1`. It is the UUIDv8 re-mint of the
-package identity (ADR-008 amendment D320); the mint-time UUIDv5 is in git
-history. A code search of the default branches visible on 2026-11-14 found
-no consumer of the old id; the patches below were never applied.
+`30bdb74d-6d6a-8e6d-a17e-2d6824776af8`. It is the UUIDv8 re-mint of the
+package identity (ADR-008 amendment D320), profile C, domain
+`julia-package-identity`, name
+`github.com/hyperpolymath/CoprocessorRuntime.jl`, so it can be recomputed with
+`bun scripts/uuid-v8.js c julia-package-identity github.com/hyperpolymath/CoprocessorRuntime.jl`
+in standards. The mint-time UUIDv5 is in git history. A new uuid is a different
+package to a Julia registry; this package is not in General (checked
+2026-11-14), and a code search of the default branches visible that day found
+no consumer of the old id. The patches below were never applied.
 
 === `Project.toml`
 
 Add to `[deps]`:
 
 ----
-CoprocessorRuntime = "01a1d947-ed2c-8570-92fa-1871a655abc1"
+CoprocessorRuntime = "30bdb74d-6d6a-8e6d-a17e-2d6824776af8"
 ----
 
 Add to `[compat]`:
