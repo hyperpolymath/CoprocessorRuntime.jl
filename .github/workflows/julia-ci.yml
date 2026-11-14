@@ -38,13 +38,13 @@ jobs:
             using Pkg
             Pkg.add("JuliaFormatter")
             using JuliaFormatter
-            for f in filter(isfile, Iterators.flatten((
+            for f in filter(f -> isfile(f) && endswith(f, ".jl"), collect(Iterators.flatten((
                 [joinpath("src", x) for x in readdir("src")],
                 [joinpath("test", x) for x in readdir("test") if x != "cases"],
                 [joinpath("test", "cases", x) for x in readdir(joinpath("test", "cases"))],
-            )))
+            ))))
                 text = read(f, String)
-                formatted = JuliaFormatter.format_string(text)
+                formatted = JuliaFormatter.format_text(text)
                 if text != formatted
                     @error "not formatted" file=f
                     exit(1)
@@ -66,7 +66,8 @@ jobs:
             using Pkg
             Pkg.add("JET")
             using JET
-            JET.test_package(path=".", julia_version="1")'
+            using CoprocessorRuntime
+            JET.test_package(CoprocessorRuntime)'
 
   test:
     name: Test (Test + Aqua)
@@ -74,7 +75,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        julia: ["1.9", "1"]
+        julia: ["1.10", "1"]
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v7.0.1

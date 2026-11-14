@@ -33,6 +33,18 @@ struct ONDClaim
     observer::Symbol
     residue::Vector{Symbol}
     status::Symbol
+
+    # Typed inner constructor: the default one accepts `Any` and converts to
+    # the field types, which lets ill-typed input fail deep inside `Base`
+    # (and JET report five "possible errors" through `convert`).
+    function ONDClaim(
+        secret_region::Symbol,
+        observer::Symbol,
+        residue::Vector{Symbol},
+        status::Symbol,
+    )
+        new(secret_region, observer, residue, status)
+    end
 end
 
 """
@@ -74,8 +86,8 @@ Construct an OND claim. Callers must list out-of-scope observables in
 function observe_null(
     secret::Symbol,
     observer::Symbol;
-    residue::Vector{Symbol}=Symbol[],
-    status::Symbol=:unproved,
+    residue::Vector{Symbol} = Symbol[],
+    status::Symbol = :unproved,
 )
     status in (:unproved, :model_checked) ||
         throw(ArgumentError("OND status must be :unproved or :model_checked, got $status"))
