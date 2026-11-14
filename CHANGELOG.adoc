@@ -50,6 +50,15 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   `JET.test_package` does not take; it now passes the package module.
 * Seven files that JuliaFormatter flagged are formatted (the syntax tree of
   each is identical before and after).
+* `docs/governance/TEMPLATE-STANDARDS-AUDIT.adoc`: the first table row had five
+  cells in a six-column table, which made asciidoctor drop cells and failed
+  `Every tracked .adoc renders clean`. The missing "Expected path" cell is now
+  `-`. This was hidden behind the root-shape failure and red on `main` too.
+* Root allowlist (`.machine_readable/root-allow.txt`) now fits a Julia package:
+  it permits `Project.toml` and `test/` (Pkg requires both names at the root)
+  and requires this repository's own deed, `CoprocessorRuntime.jl_chora.deed`,
+  instead of the template's `rsr-template-repo_chora.deed`. `estate-rules` was
+  red on `main` for exactly these entries.
 * `.github/dependabot.yml` listed cargo, mix, npm and pip, none of which this
   repository has a manifest for, so every weekly Dependabot run for them failed
   (8 of the last 10 dynamic runs). Those four are removed and the `julia`
