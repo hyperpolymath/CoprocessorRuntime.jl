@@ -41,6 +41,12 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Fixed
 
+* `dogfood-gate.yml` Canon lockstep fetched the profile from
+  `hyperpolymath/rsr-template-repo/${HEAD_SHA}` instead of this repository, so in
+  every minted repo the commit 404ed and the job failed with "no rsr-profile.a2ml"
+  whatever the profile said. It now reads `${HEAD_REPO}` (the PR head repository,
+  else this one). The job still fails, now for the true reason: the declared
+  `[canon]` pin is behind the canon (see the pull request).
 * `julia-ci.yml` Format step: it called `filter` over an uncollected
   `Iterators.Flatten` (a `MethodError`), used `format_string` (not in
   JuliaFormatter 2), and read every file in `src/`, including
