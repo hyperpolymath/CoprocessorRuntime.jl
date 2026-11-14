@@ -27,6 +27,17 @@ struct LaunchPlan
     endpoints::Vector{Endpoint}
     grade::ResourceGrade
     loss::EchoResidue
+
+    # Typed inner constructor (see `ONDClaim`): ill-typed input is rejected
+    # at the boundary instead of deep inside `convert`.
+    function LaunchPlan(
+        global_name::Symbol,
+        endpoints::Vector{Endpoint},
+        grade::ResourceGrade,
+        loss::EchoResidue,
+    )
+        new(global_name, endpoints, grade, loss)
+    end
 end
 
 function launch_plan(

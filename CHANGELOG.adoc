@@ -39,6 +39,13 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   JuliaFormatter 2), and read every file in `src/`, including
   `src/README.adoc`, which is not Julia. It now collects the list, uses
   `format_text`, and checks only `*.jl` files.
+* `ONDClaim` and `LaunchPlan` now have typed inner constructors. The default
+  ones accepted `Any` and converted to the field types, which JET 0.13 on Julia
+  1.13 reported as five possible errors (`convert` into `Vector{Symbol}` and
+  `Vector{Endpoint}`), so the JET job was red on the "1" runner. Callers that
+  already pass the declared types (`observe_null`, `launch_plan`, the tests)
+  are unaffected; a direct call with a different vector type, such as
+  `Vector{Any}`, is now a `MethodError` at the call instead of a conversion.
 * `julia-ci.yml` JET step: it passed `path=` and `julia_version=`, which
   `JET.test_package` does not take; it now passes the package module.
 * Seven files that JuliaFormatter flagged are formatted (the syntax tree of
