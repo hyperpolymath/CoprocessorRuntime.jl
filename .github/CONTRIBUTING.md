@@ -4,15 +4,15 @@ Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 -->
 ```
 # Clone the repository
-git clone https://github.com/hyperpolymath/rsr-template-repo.git
-cd rsr-template-repo
+git clone https://github.com/hyperpolymath/CoprocessorRuntime.jl.git
+cd CoprocessorRuntime.jl
 
 # Using Guix (recommended for reproducibility)
 guix shell -D -f build/guix.scm
 
 # Or using toolbox/distrobox
-toolbox create rsr-template-repo-dev
-toolbox enter rsr-template-repo-dev
+toolbox create CoprocessorRuntime.jl-dev
+toolbox enter CoprocessorRuntime.jl-dev
 # Install dependencies manually
 
 # Verify setup
@@ -72,10 +72,10 @@ Use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md) an
 
 Look for issues labelled:
 
-- [`good first issue`](https://github.com/hyperpolymath/rsr-template-repo/labels/good%20first%20issue) — Simple Perimeter 3 tasks
-- [`help wanted`](https://github.com/hyperpolymath/rsr-template-repo/labels/help%20wanted) — Community help needed
-- [`documentation`](https://github.com/hyperpolymath/rsr-template-repo/labels/documentation) — Docs improvements
-- [`perimeter-3`](https://github.com/hyperpolymath/rsr-template-repo/labels/perimeter-3) — Community sandbox scope
+- [`good first issue`](https://github.com/hyperpolymath/CoprocessorRuntime.jl/labels/good%20first%20issue) — Simple Perimeter 3 tasks
+- [`help wanted`](https://github.com/hyperpolymath/CoprocessorRuntime.jl/labels/help%20wanted) — Community help needed
+- [`documentation`](https://github.com/hyperpolymath/CoprocessorRuntime.jl/labels/documentation) — Docs improvements
+- [`perimeter-3`](https://github.com/hyperpolymath/CoprocessorRuntime.jl/labels/perimeter-3) — Community sandbox scope
 
 ---
 

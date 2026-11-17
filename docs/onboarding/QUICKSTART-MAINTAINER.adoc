@@ -2,13 +2,13 @@
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 // Template: QUICKSTART-MAINTAINER.adoc — packaging, deploying, and maintaining
 // Replace rsr-template-repo, CoprocessorRuntime, Julia stdlib only; sibling packages are optional wiring, not hard deps with actuals
-= rsr-template-repo — Quick Start for Platform Maintainers
+= CoprocessorRuntime.jl — Quick Start for Platform Maintainers
 :toc:
 :toclevels: 2
 
 == Overview
 
-This guide covers packaging, deploying, and maintaining rsr-template-repo for
+This guide covers packaging, deploying, and maintaining CoprocessorRuntime.jl for
 distribution on your platform.
 
 == Runtime Dependencies
@@ -19,8 +19,8 @@ Julia stdlib only; sibling packages are optional wiring, not hard deps
 
 [source,bash]
 ----
-git clone https://github.com/hyperpolymath/rsr-template-repo.git
-cd rsr-template-repo
+git clone https://github.com/hyperpolymath/CoprocessorRuntime.jl.git
+cd CoprocessorRuntime.jl
 just build-release
 ----
 
@@ -119,5 +119,5 @@ Each instance has isolated config, data, and logs.
 
 == Reporting Issues
 
-* Upstream: https://github.com/hyperpolymath/rsr-template-repo/issues
+* Upstream: https://github.com/hyperpolymath/CoprocessorRuntime.jl/issues
 * With diagnostic: `just help-me` (pre-fills context)

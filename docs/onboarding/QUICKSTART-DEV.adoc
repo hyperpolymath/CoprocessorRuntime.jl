@@ -2,7 +2,7 @@
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 // Template: QUICKSTART-DEV.adoc — clone → build → test → PR
 // Replace rsr-template-repo, julia --project=. -e 'using Pkg; Pkg.instantiate()', julia --project=. -e 'using Pkg; Pkg.test()', Julia (1.10+) with actuals
-= rsr-template-repo — Quick Start for Developers
+= CoprocessorRuntime.jl — Quick Start for Developers
 :toc:
 :toclevels: 2
 
@@ -23,8 +23,8 @@ guix shell
 
 [source,bash]
 ----
-git clone https://github.com/hyperpolymath/rsr-template-repo.git
-cd rsr-template-repo
+git clone https://github.com/hyperpolymath/CoprocessorRuntime.jl.git
+cd CoprocessorRuntime.jl
 just setup-dev
 ----
 
@@ -46,7 +46,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 [source]
 ----
-rsr-template-repo/
+CoprocessorRuntime.jl/
 ├── src/                  # Source code
 ├── src/interface/Abi/              # Idris2 ABI definitions (if applicable)
 ├── ffi/zig/              # Zig FFI bridge (if applicable)
@@ -100,5 +100,5 @@ Or read the repo deed (`*_chora.deed` at root) and `.claude/CLAUDE.md` directly.
 == Get Help
 
 * **Architecture**: link:EXPLAINME.adoc[EXPLAINME.adoc]
-* **Wiki**: https://github.com/hyperpolymath/rsr-template-repo/wiki
+* **Wiki**: https://github.com/hyperpolymath/CoprocessorRuntime.jl/wiki
 * **Report issue**: `just help-me`

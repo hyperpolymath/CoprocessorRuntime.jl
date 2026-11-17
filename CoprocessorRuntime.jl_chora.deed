@@ -100,7 +100,7 @@
     :chain "UNASSIGNED"
     :coordination standards
     (related :name "rsr-template-repo" :relationship minted-from :notes "the template this repo was minted from by just repo-init")
-    ; The closed :relationship vocabulary has no term for "extension of"; code-dependency is the nearest.
+    ; The closed :relationship set has 16 terms, not the 7 above (standards meta-ecosystem-to-repo-deed.adoc, [related-projects] row; section 3.1 defines 5 of them). None says "extension of"; code-dependency (code is linked) is the nearest.
     (related :name "AcceleratorGate.jl" :relationship code-dependency :notes "Kept as an extension of AcceleratorGate.jl (owner decision 2026-11-17); both repos stay and neither is released to the Julia General registry. The link is the optional weak dependency AcceleratorGate in Project.toml and the package extension ext/AcceleratorGateExt.jl, which maps each AcceleratorGate backend type to a CoprocessorKind (4 backend types map to UnknownKind). It records which kind a backend is; it does not select a backend or run anything."))
   ; <<< repo-identity
   (manifest
