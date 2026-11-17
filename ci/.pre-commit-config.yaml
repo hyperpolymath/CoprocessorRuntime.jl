@@ -62,12 +62,12 @@ repos:
     hooks:
       - id: gitleaks
 
-  # --- Arrival pack drift: CLAUDE.md must stay in sync with a2ml ---
+  # --- Arrival pack drift: CLAUDE.md must stay in sync with the repo deed ---
   - repo: local
     hooks:
       - id: validate-claude-md
-        name: CLAUDE.md arrival pack in sync with a2ml
+        name: CLAUDE.md arrival pack in sync with the repo deed
         entry: bash .machine_readable/arrival-pack/verify.sh
         language: system
         pass_filenames: false
-        files: '^(\.machine_readable/descriptiles/.*|CLAUDE\.md)$'
+        files: '^([^/]+_chora\.deed|\.machine_readable/arrival-pack/.*|CLAUDE\.md)$'
