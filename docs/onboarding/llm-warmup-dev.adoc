@@ -4,18 +4,40 @@
 
 == What is CoprocessorRuntime.jl?
 
-See `README.adoc` for overview.
+A Julia library (1.10+), host-side contract and evidence layer for coprocessor
+launches. It records launch semantics; it does not run accelerator kernels. Read
+`CLAUDE.md` and `CoprocessorRuntime.jl_chora.deed` first; they hold the repo's
+identity, IS-NOT list and constraints.
 
-== Key Commands
+== Key commands
 
-* `just setup` — set up development environment
-* `just build` — build the project
-* `just test` — run tests
-* `just doctor` — diagnose issues
-* `just heal` — attempt auto-repair
+[source,bash]
+----
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+julia --project=. -e 'using Pkg; Pkg.test()'     # Test + Aqua + extension tests
+----
 
-== Quick Context
+JET and JuliaFormatter commands are in link:QUICKSTART-DEV.adoc[QUICKSTART-DEV].
+In the root `Justfile`, `just test`, `build`, `run`, `lint` and `fmt` are
+template placeholders (`just test` fails on purpose). Do not use them.
 
-* License: MPL-2.0
-* Part of hyperpolymath ecosystem
-* See `EXPLAINME.adoc` for architecture
+== Layout
+
+* `src/` — the package: `Kinds.jl`, `Sessions.jl`, `Grades.jl`, `EchoLoss.jl`,
+  `Receipts.jl`, `Nullity.jl`, `Choreography.jl`, loaded by `CoprocessorRuntime.jl`.
+  The other directories under `src/` are not loaded by the module.
+* `ext/AcceleratorGateExt.jl` — weak-dependency extension; its tests need Julia 1.11.
+* `test/` — `runtests.jl`, `cases/`, `ext/`.
+
+== Rules that matter
+
+* Do not claim more than the code records: receipts, CNO and OND claims are
+  claims, not proofs; K-CUT stays `:open`; there is no universal hub.
+* Never add a `.a2ml` file; no TypeScript, ReScript, Python, Go or Nix.
+* No automated licence edits. Sign every commit.
+* The package is not released to the Julia General registry.
+
+== Quick context
+
+* Licence: MPL-2.0 (code), CC-BY-SA-4.0 (docs).
+* Part of the hyperpolymath ecosystem. Overview: link:../../README.adoc[README].

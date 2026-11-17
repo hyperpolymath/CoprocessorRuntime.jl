@@ -4,18 +4,37 @@
 
 == What is CoprocessorRuntime.jl?
 
-See `README.adoc` for overview.
+A Julia library: a host-side contract and evidence layer for coprocessor
+launches. It models host and device roles, resource grades, transfer residues,
+launch receipts and CNO/OND claims. It records launch semantics; it does not
+run accelerator kernels.
 
-== Key Commands
+== How a user gets and uses it
 
-* `just setup` — set up development environment
-* `just build` — build the project
-* `just test` — run tests
-* `just doctor` — diagnose issues
-* `just heal` — attempt auto-repair
+* Julia 1.10 or later. No runtime dependencies.
+* Install: `Pkg.add(url="https://github.com/hyperpolymath/CoprocessorRuntime.jl")`.
+  It is not in the Julia General registry and will not be released there. Do
+  not suggest `Pkg.add("CoprocessorRuntime")`.
+* Use: `using CoprocessorRuntime`. There is no application, service, CLI or
+  container to run.
+* Worked example and expected output: link:QUICKSTART-USER.adoc[QUICKSTART-USER].
 
-== Quick Context
+== What it is not
 
-* License: MPL-2.0
-* Part of hyperpolymath ecosystem
-* See `EXPLAINME.adoc` for architecture
+Do not describe it as any of these:
+
+* an executor of CUDA, ROCm, Metal or TPU kernels (that is `CUDA.jl`,
+  `AMDGPU.jl`, `Metal.jl`, `KernelAbstractions.jl`)
+* a backend selector (`AcceleratorGate.jl`)
+* a healer of failing kernels (`HardwareResilience.jl`)
+* a proof of CNO/OND (`absolute-zero`); claims here are `:unproved` or
+  `:model_checked`
+* a closure of K-CUT; that conjecture is open in `choreographic-types`
+
+`universal_hub_allowed()` throws `HubCeilingRefusal`: there is no universal
+adapter.
+
+== Quick context
+
+* Licence: MPL-2.0 for code, CC-BY-SA-4.0 for documentation.
+* Part of the hyperpolymath ecosystem. Overview: link:../../README.adoc[README].

@@ -1,123 +1,78 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// Template: QUICKSTART-MAINTAINER.adoc — packaging, deploying, and maintaining
-// Replace rsr-template-repo, CoprocessorRuntime, Julia stdlib only; sibling packages are optional wiring, not hard deps with actuals
-= CoprocessorRuntime.jl — Quick Start for Platform Maintainers
+= CoprocessorRuntime.jl — Quick Start for Maintainers
 :toc:
 :toclevels: 2
 
 == Overview
 
-This guide covers packaging, deploying, and maintaining CoprocessorRuntime.jl for
-distribution on your platform.
+CoprocessorRuntime.jl is a Julia library distributed as source from its Git
+repository. There is nothing to package or deploy: no binary, no installer, no
+container image, and no Guix or OPSM package. Users install it with
+`Pkg.add(url=...)`.
 
-== Runtime Dependencies
+It is not in the Julia General registry and will not be released there, so
+there is no registry release step and no version to register.
 
-Julia stdlib only; sibling packages are optional wiring, not hard deps
+== Dependencies
 
-== Build from Source
+* Runtime: none. The `[deps]` table in `Project.toml` is empty.
+* Optional: `AcceleratorGate` is a weak dependency (compat `0.1`) behind the
+  package extension `AcceleratorGateExt`. AcceleratorGate is not in General
+  either, so `test/ext/Project.toml` fetches it by URL from a pinned commit
+  (`rev`). Moving that pin is a deliberate change: re-run the extension tests
+  on Julia 1.11 when you do.
+* Test: `Test` and `Aqua`, declared under `[extras]`.
+* Julia: `julia = "1.10"` is the floor. CI's oldest leg is 1.10, so raising or
+  lowering the floor means changing `[compat]` and the CI matrix together.
 
-[source,bash]
-----
-git clone https://github.com/hyperpolymath/CoprocessorRuntime.jl.git
-cd CoprocessorRuntime.jl
-just build-release
-----
+== What CI gates
 
-Output: `src/`
+`.github/workflows/julia-ci.yml` runs on pull requests and on pushes to `main`
+and `master`:
 
-== Packaging
-
-=== Guix
-
-[source,bash]
-----
-guix build -f build/guix.scm
-----
-
-=== Container (Stapeln)
-
-[source,bash]
-----
-just stapeln-export    # Generates Containerfile
-podman build -t rsr-template-repo .
-----
-
-=== Manual Package
-
-[source,bash]
-----
-just install --prefix=/usr/local
-----
-
-Files installed:
-
-[cols="1,2"]
+[cols="1,3"]
 |===
-| Path | Contents
+| Job | What it checks
 
-| `$PREFIX/bin/`
-| Executables
+| Format (JuliaFormatter)
+| `src/`, `test/` and `test/cases/` are formatted. Check mode only; CI never writes.
 
-| `$PREFIX/share/CoprocessorRuntime/`
-| Data files, assets
+| Static analysis (JET)
+| `JET.test_package(CoprocessorRuntime)`.
 
-| `$PREFIX/share/doc/CoprocessorRuntime/`
-| Documentation
-
-| `$PREFIX/share/applications/`
-| .desktop file (Linux, if GUI)
-
-| `$PREFIX/share/man/man1/`
-| Man pages
+| Test (Test + Aqua)
+| `Pkg.test()` on Julia 1.10 and the latest 1.x. The extension tests run only
+  on 1.11 or later and are reported as `Broken` on 1.10.
 |===
 
-== Configuration
+The exact commands are in the
+link:QUICKSTART-DEV.adoc#_checks_ci_runs[developer quick start]. Other workflows
+in `.github/workflows/` are template-wide estate checks.
 
-Default config location: `$XDG_CONFIG_HOME/CoprocessorRuntime/config.toml`
+== Merging
 
-Fallback: `$HOME/.config/CoprocessorRuntime/config.toml`
+* Every commit must be signed. A ruleset (`.github/rulesets/base.json`)
+  requires signatures. See link:../../CONTRIBUTING.adoc[CONTRIBUTING] for how.
+* Pull requests are squash-merged; that ruleset allows no other method.
+* The ruleset's `required_status_checks` list is currently empty, so no
+  check is enforced by GitHub as required. Do not merge over a red Julia CI
+  run regardless.
+* After a squash-merge, delete the feature branch and start follow-up work from
+  the current `main`.
 
-== Health Checks
+== Releases
 
-[source,bash]
-----
-just doctor            # Full diagnostic
-just run --version   # Version check
-just run --selftest  # Built-in self-test
-----
+There is no registry release. The repository has a generic `release.yml` that
+fires on `v*` tags; it comes from the template and this guide does not cover
+it. Record user-visible changes under `[Unreleased]` in `CHANGELOG.adoc`.
 
-== Updating
+== Security and conduct
 
-[source,bash]
-----
-git pull
-just build-release
-just install --prefix=/usr/local
-----
+* Report vulnerabilities as `.github/SECURITY.md` describes.
+* Licences: code is MPL-2.0, documentation is CC-BY-SA-4.0 (see `LICENSE` and
+  the README). Do not change licence headers or files without the owner.
 
-Or via OPSM: `opsm update CoprocessorRuntime`
+== Reporting issues
 
-== Security Notes
-
-* License: MPL-2.0 (code) / CC-BY-SA-4.0 (docs)
-* All dependencies SHA-pinned
-* `panic-attacker` scan results: link:INSTALL-SECURITY-REPORT.adoc[]
-* OpenSSF Scorecard: see badge in README
-
-== Multi-Instance Deployment
-
-For deploying multiple instances (e.g., different users or tenants):
-
-[source,bash]
-----
-just install --prefix=/opt/CoprocessorRuntime-instance1 --config=/etc/CoprocessorRuntime/instance1.toml
-just install --prefix=/opt/CoprocessorRuntime-instance2 --config=/etc/CoprocessorRuntime/instance2.toml
-----
-
-Each instance has isolated config, data, and logs.
-
-== Reporting Issues
-
-* Upstream: https://github.com/hyperpolymath/CoprocessorRuntime.jl/issues
-* With diagnostic: `just help-me` (pre-fills context)
+https://github.com/hyperpolymath/CoprocessorRuntime.jl/issues
