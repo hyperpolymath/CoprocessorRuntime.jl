@@ -9,9 +9,9 @@ Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 TEMPLATE INSTRUCTIONS (delete this block before publishing)
 ============================================================================
 Replace all {{PLACEHOLDER}} values:
-  rsr-template-repo     - Your project name
+  CoprocessorRuntime.jl     - Your project name
   hyperpolymath            - GitHub/GitLab username or org
-  rsr-template-repo             - Repository name
+  CoprocessorRuntime.jl             - Repository name
   j.d.a.jewell@open.ac.uk    - Email for conduct reports
   Jonathan D.A. Jewell     - Name of conduct team/committee
   7 days    - Initial response SLA (e.g., 48 hours)

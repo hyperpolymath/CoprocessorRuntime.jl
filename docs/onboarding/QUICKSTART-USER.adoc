@@ -1,125 +1,121 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// Template: QUICKSTART-USER.adoc — 5-minute path to working software
-// Replace rsr-template-repo, Rsr Template Repo — See README.adoc for details., just run, Rsr Template Repo started successfully. with actuals
 = CoprocessorRuntime.jl — Quick Start for Users
 :toc:
 :toclevels: 2
 
 == What is CoprocessorRuntime.jl?
 
-Rsr Template Repo — See README.adoc for details.
+A host-side contract and evidence layer for coprocessor launches. It models
+host and device roles, resource grades, transfer residues, launch receipts and
+CNO/OND claims. It records launch semantics; it does not run accelerator
+kernels.
+
+It is a Julia library. There is no application to start and no service to run:
+you load it with `using CoprocessorRuntime` and call it from your own code.
+
+== What it is not
+
+* It does not execute CUDA, ROCm, Metal or TPU kernels. That is `CUDA.jl`,
+  `AMDGPU.jl`, `Metal.jl` or `KernelAbstractions.jl`.
+* It does not select a backend. That is `AcceleratorGate.jl`.
+* It does not heal a failing kernel. That is `HardwareResilience.jl`.
+* It does not prove CNO/OND. That is `absolute-zero`. A claim here has status
+  `:unproved` or `:model_checked`.
+* It does not close K-CUT. That conjecture is open in `choreographic-types`.
 
 == Prerequisites
 
-Before you begin, ensure you have:
-
-* **just** — task runner (https://github.com/casey/just[install guide])
-* Platform-specific requirements listed below
-
-[cols="1,3"]
-|===
-| Platform | Additional Requirements
-
-| Linux
-| See README.adoc
-
-| macOS
-| See README.adoc
-
-| Windows
-| See README.adoc
-|===
+* Julia 1.10 or later. Continuous integration runs 1.10 and the latest 1.x.
+* No other packages. `Project.toml` lists no runtime dependencies.
 
 == Install
 
-=== Option 1: Standard Install (recommended)
+The package is not in the Julia General registry and is not going to be
+released there, so install it from its repository:
 
-[source,bash]
+[source,julia]
 ----
-# Clone and set up
-git clone https://github.com/hyperpolymath/CoprocessorRuntime.jl.git
-cd CoprocessorRuntime.jl
-just setup
-----
-
-The setup script will:
-
-* Detect your platform and shell
-* Install missing dependencies (with your permission)
-* Configure the application
-* Offer install location choices
-* Run a self-diagnostic to verify everything works
-
-=== Option 2: Container (via Stapeln)
-
-[source,bash]
-----
-just stapeln-run
+using Pkg
+Pkg.add(url="https://github.com/hyperpolymath/CoprocessorRuntime.jl")
 ----
 
-=== Option 3: Portable (no system changes)
+This installs the `main` branch.
 
-[source,bash]
-----
-just install --portable --prefix=./CoprocessorRuntime.jl-portable
-----
+== First use
 
-== First Run
+Save this as `first.jl` and run it with `julia --project=. first.jl` from the
+environment you installed into:
 
-[source,bash]
+[source,julia]
 ----
-just run
+using CoprocessorRuntime
+
+s = open_session(GPUKind())
+plan = launch_plan(
+    :matmul,
+    [Endpoint(HostRole(), CPUKind()), Endpoint(DeviceRole(), GPUKind())],
+    ResourceGrade(1 << 20, 10_000, 0.0),
+    EchoResidue(collapsing_transfer(:f32_to_f16), "mantissa fibre"),
+)
+
+device_view = project(plan, DeviceRole())
+println("kcut: ", device_view.kcut)
+
+receipt = issue_receipt(s; warrant = WarrantOnly, claim = "planned")
+println("host may claim: ", host_may_claim(receipt))
+
+try
+    universal_hub_allowed()
+catch err
+    println("refused: ", typeof(err))
+end
+
+close_session!(s)
+println("session open: ", isopen(s))
 ----
 
 Expected output:
 
 [source]
 ----
-Rsr Template Repo started successfully.
+kcut: open
+host may claim: false
+refused: HubCeilingRefusal
+session open: false
 ----
 
-== Self-Diagnostic
+What it shows:
 
-If something isn't working:
+* `project` gives one endpoint's view of the launch plan. The K-CUT field stays
+  `:open`: the package does not claim to have closed it.
+* A receipt issued with `WarrantOnly` is not factive, so the host may not claim
+  the launch happened.
+* `universal_hub_allowed()` always throws `HubCeilingRefusal`: one adapter
+  cannot speak every vendor protocol.
+
+== Optional: AcceleratorGate
+
+If `AcceleratorGate.jl` is also loaded, the package extension
+`AcceleratorGateExt` adds methods of `coprocessor_kind` that map an
+AcceleratorGate backend to the `CoprocessorKind` a session is opened against.
+It records which kind a backend is; it does not select a backend or check that
+a device exists.
+
+== Run the tests
+
+From a clone of the repository (see the
+link:QUICKSTART-DEV.adoc[developer quick start]):
 
 [source,bash]
 ----
-just doctor
+julia --project=. -e 'using Pkg; Pkg.test()'
 ----
 
-This checks all dependencies, permissions, paths, and connectivity.
-If it finds issues, it will suggest fixes.
+== Where to read more
 
-To attempt automatic repair:
-
-[source,bash]
-----
-just heal
-----
-
-== Get Help
-
-* **In-app**: `just run --help`
-* **Guided tour**: `just tour`
-* **Report a problem**: `just help-me` (pre-fills diagnostic context)
-* **Wiki**: https://github.com/hyperpolymath/CoprocessorRuntime.jl/wiki
-
-== Uninstall
-
-[source,bash]
-----
-just uninstall
-----
-
-You will be asked:
-
-1. Which uninstall tier (Bennett reversible, parameter-based, standard, or secure)
-2. Whether to include or exclude your data
-3. Whether to clear caches and LLM models
-
-== Next Steps
-
-* Read the link:README.adoc[README] for full feature overview
-* Read the link:EXPLAINME.adoc[EXPLAINME] for architecture and design decisions
-* Try `just tour` for a guided walkthrough
+* link:../../README.adoc[README] — what each part records.
+* The docstrings in `src/` — one file per concept (`Kinds.jl`, `Sessions.jl`,
+  `Grades.jl`, `EchoLoss.jl`, `Receipts.jl`, `Nullity.jl`, `Choreography.jl`).
+* link:../theory/TYPE-INFORMED-BACKENDS.adoc[Type-informed backend notes].
+* Problems and questions: https://github.com/hyperpolymath/CoprocessorRuntime.jl/issues

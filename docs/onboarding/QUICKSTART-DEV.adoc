@@ -1,39 +1,25 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// Template: QUICKSTART-DEV.adoc — clone → build → test → PR
-// Replace rsr-template-repo, julia --project=. -e 'using Pkg; Pkg.instantiate()', julia --project=. -e 'using Pkg; Pkg.test()', Julia (1.10+) with actuals
 = CoprocessorRuntime.jl — Quick Start for Developers
 :toc:
 :toclevels: 2
 
-== Tech Stack
+== Tech stack
 
-Julia (1.10+)
+Julia 1.10 or later (`julia = "1.10"` in `Project.toml`). There are no runtime
+dependencies. `AcceleratorGate` is a weak dependency used by one package
+extension. The test environment adds `Test` and `Aqua`.
 
-== Set Up Development Environment
-
-=== Option A: Guix (preferred)
-
-[source,bash]
-----
-guix shell
-----
-
-=== Option B: Manual
+== Set up
 
 [source,bash]
 ----
 git clone https://github.com/hyperpolymath/CoprocessorRuntime.jl.git
 cd CoprocessorRuntime.jl
-just setup-dev
-----
-
-== Build
-
-[source,bash]
-----
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ----
+
+`Manifest.toml` is git-ignored; do not commit one.
 
 == Test
 
@@ -42,63 +28,131 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. -e 'using Pkg; Pkg.test()'
 ----
 
-== Project Structure
+This runs `test/runtests.jl`: the Aqua checks, then the cases under
+`test/cases/` (`smoke`, `grades`, `sessions`, `receipts`, `choreography`), then
+the extension tests.
+
+The extension tests (`AcceleratorGateExt`) run in their own environment,
+`test/ext`, which fetches AcceleratorGate by URL from a pinned commit. That
+needs Julia 1.11. On Julia 1.10 they are reported as one `Broken` test and a
+message says why, so a 1.10 run shows `Broken 1`. To skip them deliberately,
+set `COPROCESSORRUNTIME_SKIP_EXT_TESTS=1`.
+
+== Checks CI runs
+
+`.github/workflows/julia-ci.yml` runs three jobs on every pull request and on
+pushes to `main` and `master`. To reproduce them, run the same commands.
+
+*Tests and Aqua* (Julia 1.10 and the latest 1.x): the `Pkg.test()` command above.
+
+*Static analysis* (JET, latest 1.x):
+
+[source,bash]
+----
+julia --project=. -e '
+  using Pkg
+  Pkg.add("JET")
+  using JET
+  using CoprocessorRuntime
+  JET.test_package(CoprocessorRuntime)'
+----
+
+*Format* (JuliaFormatter, check mode, latest 1.x). It covers `src/`, `test/`
+and `test/cases/`:
+
+[source,bash]
+----
+julia --project=. -e '
+  using Pkg
+  Pkg.add("JuliaFormatter")
+  using JuliaFormatter
+  for f in filter(f -> isfile(f) && endswith(f, ".jl"), collect(Iterators.flatten((
+      [joinpath("src", x) for x in readdir("src")],
+      [joinpath("test", x) for x in readdir("test") if x != "cases"],
+      [joinpath("test", "cases", x) for x in readdir(joinpath("test", "cases"))],
+  ))))
+      text = read(f, String)
+      formatted = JuliaFormatter.format_text(text)
+      if text != formatted
+          @error "not formatted" file=f
+          exit(1)
+      end
+  end'
+----
+
+The last two commands run `Pkg.add`, which edits `Project.toml` in the
+checkout. Run them in a throwaway copy, or restore the file afterwards with
+`git checkout Project.toml`.
+
+== Project structure
 
 [source]
 ----
 CoprocessorRuntime.jl/
-├── src/                  # Source code
-├── src/interface/Abi/              # Idris2 ABI definitions (if applicable)
-├── ffi/zig/              # Zig FFI bridge (if applicable)
-├── tests/                # Test suite
-├── docs/                 # Documentation
-├── .machine_readable/    # Checkpoint files (STATE, META, ECOSYSTEM)
-├── Justfile              # Task runner recipes
-├── build/                # Build orchestration (just/, guix.scm, container/)
-└── *_chora.deed          # repo deed: AI entry point (allocation + ply tree)
+├── Project.toml          # package, weak dependency, compat
+├── src/                  # the package: one file per concept
+│   ├── CoprocessorRuntime.jl   # module and exports
+│   ├── Kinds.jl                # roles and coprocessor kinds
+│   ├── Sessions.jl             # sessions
+│   ├── Grades.jl               # tropical resource grades
+│   ├── EchoLoss.jl             # transfer residues
+│   ├── Receipts.jl             # launch receipts, warrants
+│   ├── Nullity.jl              # CNO / OND claims
+│   └── Choreography.jl         # launch plans, projection, hub ceiling
+├── ext/AcceleratorGateExt.jl   # optional AcceleratorGate mapping
+├── test/                 # runtests.jl, cases/, ext/ (extension environment)
+├── docs/                 # documentation
+├── CoprocessorRuntime.jl_chora.deed   # repo deed: identity, ecosystem, status
+└── CLAUDE.md             # arrival pack for AI assistants
 ----
 
-== Key Recipes
+The other directories under `src/` (`aspects/`, `interface/`, `bridges/` and
+so on) are not loaded by the module, and the shell checks under `tests/` are
+not run by `Pkg.test()`.
+The generated map of every directory is
+link:../architecture/REPOSITORY-MAP.adoc[REPOSITORY-MAP.adoc].
+
+== The optional extension
+
+`ext/AcceleratorGateExt.jl` is a package extension (`[extensions]` in
+`Project.toml`). It loads only when `AcceleratorGate` is also loaded, and it
+maps each AcceleratorGate backend type to a `CoprocessorKind`. Four backend
+types (`PPUBackend`, `MathBackend`, `VPUBackend`, `CryptoBackend`) have no kind
+here and map to `UnknownKind`. Adding a kind is an API change to this package.
+
+== just recipes
+
+The root `Justfile` is largely template scaffolding. `just test`, `just build`,
+`just run`, `just lint` and `just fmt` are placeholders; `just test` fails on
+purpose until it is wired. Use the Julia commands above instead. These recipes
+do real work:
 
 [source,bash]
 ----
-just build          # Build the project
-just test           # Run tests
-just doctor         # Self-diagnostic
-just lint           # Lint and format
-just panic-scan     # Security scan via panic-attacker
-just tour           # Guided tour of the codebase
+just repo-map             # regenerate docs/architecture/REPOSITORY-MAP.adoc
+just validate-repo-map    # fail if the map is stale (CI diffs it)
+just validate-claude-md   # fail if CLAUDE.md drifted from the deed (needs nickel)
 ----
 
-== Before Submitting a PR
+Run `just --list` for the rest.
 
-[source,bash]
-----
-just lint           # Format and lint
-just test           # All tests pass
-just panic-scan     # No new security issues
-----
+== Design commitments
 
-== Contractile Invariants
+Taken from the README and the repo deed; do not weaken them:
 
-Read `.machine_readable/MUST.contractile` before making changes.
-Key invariants that must never be violated:
+* No vendor kernels are executed or selected here.
+* There is no universal hub: `universal_hub_allowed()` throws `HubCeilingRefusal`.
+* Receipts, CNO claims and OND claims are claims, not proofs. Their status is
+  `:unproved` or `:model_checked`.
+* K-CUT stays `:open`.
 
-no vendor kernels; hub_ceiling refusal; receipts are not proofs
+== Before opening a pull request
 
-== LLM/AI Agent Development
+* Tests, JET and the format check above pass.
+* Sign every commit. A ruleset requires signatures, and squash-merges pull
+  requests; see link:../../CONTRIBUTING.adoc[CONTRIBUTING].
+* Use Conventional Commits, for example `fix(grades): ...`.
 
-If using an AI assistant, load the warmup context first:
+== AI assistants
 
-[source,bash]
-----
-just llm-context    # Outputs role-appropriate context
-----
-
-Or read the repo deed (`*_chora.deed` at root) and `.claude/CLAUDE.md` directly.
-
-== Get Help
-
-* **Architecture**: link:EXPLAINME.adoc[EXPLAINME.adoc]
-* **Wiki**: https://github.com/hyperpolymath/CoprocessorRuntime.jl/wiki
-* **Report issue**: `just help-me`
+Read `CLAUDE.md` and the repo deed (`CoprocessorRuntime.jl_chora.deed`) first.
