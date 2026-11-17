@@ -36,16 +36,17 @@ Include order respects every arrow.
 
 [source]
 ----
-   Kinds.jl        Grades.jl       EchoLoss.jl       (no dependencies)
-     |   \             |               |
-     |    \            |               |
-     v     \           v               v
- Sessions.jl \         +------+--------+
-     |   |    \               |
-     |   |     +--------------+---> Choreography.jl
-     |   |                         (Role, CoprocessorKind, ResourceGrade, EchoResidue)
-     v   v
-Receipts.jl   Nullity.jl           (both use Session)
+ Receipts.jl    Nullity.jl      Choreography.jl
+      \           /           /       |        \
+       v         v           /        |         \
+       Sessions.jl          /         |          \
+            |              /          |           \
+            v             v           v            v
+         Kinds.jl <-------+       Grades.jl     EchoLoss.jl
+
+   Kinds.jl, Grades.jl and EchoLoss.jl refer to no other file.
+   Receipts.jl and Nullity.jl use Session; Choreography.jl uses
+   Role, CoprocessorKind, ResourceGrade and EchoResidue.
 ----
 
 [cols="1,2",options="header"]
@@ -84,7 +85,7 @@ Nothing in `src/` refers to it, so the core stays free of the dependency.
 test/runtests.jl
   Aqua.test_all(CoprocessorRuntime)
   include test/cases/{smoke,grades,sessions,receipts,choreography}.jl
-  subprocess: julia --project=test/ext test/ext/runtests.jl     (Julia 1.11 only)
+  subprocess: julia --project=test/ext test/ext/runtests.jl     (Julia 1.11 or later)
                  test/ext/Project.toml: AcceleratorGate (pinned git rev), CoprocessorRuntime (path ../..)
 ----
 

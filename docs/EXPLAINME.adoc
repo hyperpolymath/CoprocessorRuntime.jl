@@ -43,7 +43,7 @@ General registry (see `QUICKSTART.adoc`).
 | `src/Receipts.jl`
 
 | Did a reset do nothing, and did a channel reveal nothing?
-| `CNOClaim` and `ONDClaim`, whose `status` is `:unproved` or `:model_checked`
+| `CNOClaim` and `ONDClaim`, whose `status` is meant to be `:unproved` or `:model_checked`; the constructors accept any `Symbol`, and only `observe_null` rejects other values
 | `src/Nullity.jl`
 
 | Can one adapter speak every vendor protocol?

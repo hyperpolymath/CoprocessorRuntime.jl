@@ -41,8 +41,9 @@ by URL only if the `coprocessor_kind` mapping is wanted.
 
 === 3. Or work on a checkout
 
-Always take the repository from `origin/main`, never from a stale local
-working tree.
+When no revision is requested, take the repository from `origin/main`, never
+from a stale local working tree. When a pull request or branch is named, check
+out and test that revision instead.
 
 [source,bash]
 ----
@@ -95,8 +96,12 @@ The package performs no telemetry and makes no network requests: `src/` and
 What does touch the network is installation and testing, not the package:
 
 * `Pkg.add(url=...)` and `git clone` fetch from GitHub.
-* `Pkg.test()` on Julia 1.11 fetches `AcceleratorGate.jl` from GitHub at the
-  commit pinned in `test/ext/Project.toml`, and may update the Julia General
+* `Pkg.test()` on any supported Julia needs the Aqua test dependency
+  (`[extras]` and `[targets]` in `Project.toml`). With an empty depot, even on
+  Julia 1.10, where the extension tests are skipped, it can download Aqua and
+  the General registry data needed to resolve it.
+* `Pkg.test()` on Julia 1.11 also fetches `AcceleratorGate.jl` from GitHub at
+  the commit pinned in `test/ext/Project.toml`, and may update the Julia General
   registry.
 
 Do not invent identity values (owner, author, email) when editing files; report

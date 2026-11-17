@@ -15,6 +15,15 @@ checklist). That text described the template, not this package, and has been
 removed. The RSR outline itself is maintained upstream, in
 `docs/RSR_OUTLINE.adoc` of https://github.com/hyperpolymath/standards[hyperpolymath/standards].
 
+== `.well-known` metadata
+
+The RFC 8615 metadata files live in `www/.well-known/` in this repository:
+`security.txt`, `ai.txt`, `humans.txt` and `aibdp.json`. A repository-root
+`.well-known/` is the legacy location. This repository has none;
+`scripts/migrate-wellknown-to-www.sh` moves one into `www/.well-known/` and
+`scripts/sweep-wellknown.sh` drives that across repositories (`rsr-template-repo#53`).
+`www/README.adoc` describes the `www/` bundle.
+
 == Where to look here instead
 
 [cols="1,2",options="header"]
@@ -27,5 +36,5 @@ removed. The RSR outline itself is maintained upstream, in
 | The directory map of the repository (generated, checked in CI) | `architecture/REPOSITORY-MAP.adoc`
 | Repository identity and agent permissions | the `*_chora.deed` at the repository root
 | Tests and what is missing | `status/TEST-NEEDS.adoc`
-| Milestones | `status/ROADMAP.adoc`
+| Milestones | `status/ROADMAP.adoc` is where milestones go; it has not been filled in for this package yet (it is still the template's placeholder)
 |===

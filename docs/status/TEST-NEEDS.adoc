@@ -68,8 +68,11 @@ been run, and the census above has no denominator of source lines or branches.
 
 * No test of `EchoResidue` or `TransferMap` equality, nor of
   `injective_transfer` on its own (they appear only as inputs to other tests).
-* No test of `kind_label` for each of the eight kinds, nor of the `UnknownKind`
-  fallback method.
+* No test of `kind_label` for each of the eight kinds in `test/cases` (only
+  `GPUKind` is checked there). The `UnknownKind` method is exercised, by
+  `test/ext/runtests.jl` (Julia 1.11 or later, in the extension subprocess); the
+  generic `kind_label(::CoprocessorKind)` fallback (`src/Kinds.jl`) is not
+  tested.
 * No test of `observe_null` rejecting an invalid status, as far as the case
   files show.
 * No property-based or fuzz tests. `tests/fuzz/README.adoc` says no harness is
