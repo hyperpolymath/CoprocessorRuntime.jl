@@ -1,126 +1,94 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= TEST-NEEDS: rsr-template-repo
+= TEST-NEEDS: CoprocessorRuntime.jl
 
-== CRG Grade: C — ACHIEVED 2026-04-04
+What tests exist for the Julia package, what CI runs, and what is missing.
+Every count below comes from a run of `julia --project=. -e 'using Pkg; Pkg.test()'`
+with the test sets set to verbose, on Julia 1.11.7 and 1.10.10, at commit
+`6ccf6c9`. Counts are of assertions that ran, not of lines or functions.
 
-== Current State (Updated 2026-04-04)
+== Grade
 
-[cols="2,1,4", options="header"]
+No CRG or TRG grade is established by this document. `status/READINESS.adoc`
+carries `Current Grade: X` (not graded) and its per-component table is
+unfilled. The test census below is evidence a grade assessment could use; it is
+not an assessment, and it does not show coverage of the source.
+
+== Package tests (`test/`)
+
+`test/runtests.jl` runs seven test sets under one top-level `CoprocessorRuntime`
+set.
+
+[cols="3,1,3",options="header"]
 |===
-| Category | Count | Details
+| Test set | Assertions | Source
 
-| *Source modules* | 6 | 3 Idris2 ABI (Foreign, Layout, Types), 2 Zig FFI (build, main), 1 Zig integration test template
-| *Unit tests* | 0 | None in main source (inline tests in main.zig)
-| *Integration tests* | 1 | `test/integration_test.zig` (documented template, 1 placeholder test)
-| *E2E tests* | 1 | `tests/e2e/template_instantiation_test.sh` (full instantiation + validation)
-| *Workflow tests* | 1 | `tests/workflows/validate_workflows_test.sh` (21 workflows validated)
-| *Validation tests* | 1 | `scripts/validate-template.sh` (8-phase comprehensive validation)
-| *Benchmarks* | 5 | `benches/template_bench.sh` (validation, Zig build, tests, workflows, instantiation)
-| *Fuzz tests* | 0 | `README.adoc` scaffold with harness instructions
+| Aqua (`Aqua.test_all`) | 11 | `test/runtests.jl`
+| smoke | 4 | `test/cases/smoke.jl`
+| tropical grades | 10 | `test/cases/grades.jl`
+| sessions and nullity | 10 | `test/cases/sessions.jl`
+| epistemic receipts | 4 | `test/cases/receipts.jl`
+| choreography and hub_ceiling | 7 | `test/cases/choreography.jl`
+| AcceleratorGateExt (subprocess) | 1 | `test/runtests.jl` (runs `test/ext`)
 |===
 
-== Completed Work (CRG C - Testing & Benchmarking)
+Result on Julia 1.11.7: 47 passed of 47. Result on Julia 1.10.10: 46 passed,
+1 broken, of 47; the broken one is the `AcceleratorGateExt` entry, recorded as
+`@test_skip` because `test/ext` needs Julia 1.11 (`[sources]`). Setting
+`COPROCESSORRUNTIME_SKIP_EXT_TESTS=1` on 1.11 gives the same 46 passed and
+1 broken.
 
-=== Template Validation Script ✅
+=== Extension tests (`test/ext`)
 
-* [x] `scripts/validate-template.sh` — 8-phase validation
-** Phase 1: Core repository structure (root files, directories)
-** Phase 2: Machine-readable metadata (`.machine_readable/`)
-** Phase 3: GitHub Actions workflows (17 required + all present)
-** Phase 4: Idris2 ABI and Zig FFI source files
-** Phase 5: Placeholder token replacement (skipped in template)
-** Phase 6: SPDX license headers (100% coverage, 6/6 files)
-** Phase 7: Build system verification (`zig build` + `idris2` syntax check)
-** Phase 8: Documentation requirements (TOPOLOGY, ABI-FFI-README, etc)
-* Status: *PASSING* (0 errors, 3 warnings about template placeholders)
+On Julia 1.11 the subprocess runs `test/ext/runtests.jl` in its own environment
+(AcceleratorGate fetched by URL at a pinned commit). It has five test sets and
+24 assertions, 24 passed of 24: the extension is loaded (2); the table covers
+every AcceleratorGate backend subtype (1); each of the 15 backends maps to its
+kind (15); the four backends with no kind here map to `:unknown` (4); a mapped
+kind opens a session (2).
 
-=== E2E Template Instantiation Test ✅
+== What CI runs
 
-* [x] `tests/e2e/template_instantiation_test.sh` — full workflow
-** Clones template to temp directory
-** Runs the real `just repo-init` (never a second copy of its substitution list)
-** Validates resulting structure with `scripts/validate-template.sh`
-** Verifies Zig build works after instantiation
-** Checks no placeholder survives, via `scripts/check-no-placeholders.sh`
-** Cleans up temp directory
+`.github/workflows/julia-ci.yml` has three jobs, read from the file; this
+document does not report their results:
 
-NOTE: this entry read `[x]` from the day it was written until 2026-07-17, while
-the test aborted at its first substitution line (`file: unbound variable`) on
-every invocation. Nothing noticed: CI ran `tests/e2e.sh`, which did not call it,
-and its only caller — `benches/template_bench.sh` — pipes it to `/dev/null` and
-appends `|| true`, so it was timing a script that died instantly. The tick was
-copied from the test's intent, not from a run. Tick these boxes from observed
-output only.
-* Status: *READY TO TEST* (can be verified by CI)
+* Format: JuliaFormatter check over `src/` and `test/` including `test/cases` (not `ext/` or `test/ext`) (Julia `1`).
+* Static analysis: `JET.test_package(CoprocessorRuntime)` (Julia `1`).
+* Test: `Pkg.test()` (Test and Aqua) on Julia `1.10` and `1`, Ubuntu.
 
-=== Workflow Validation Test ✅
+Other workflows exist under `.github/workflows/` (for example `estate-rules.yml`
+runs the repository-shape, AsciiDoc and session-contract checks). The shell
+tests under `tests/` check repository structure and estate tooling. They do not
+test the Julia sources in `src/` directly, and they were not run for this document.
 
-* [x] `tests/workflows/validate_workflows_test.sh`
-** Validates all 21 workflows exist and have proper structure
-** Checks SPDX headers, `name` field
-** Verifies all 15 required workflows present
-* Status: *PASSING* (0 errors, 15/15 required workflows found)
+== What is not covered
 
-=== Zig FFI Tests ✅
+Stated from reading `src/` against `test/`; not measured. No coverage tool has
+been run, and the census above has no denominator of source lines or branches.
 
-* [x] `src/interface/ffi/test/integration_test.zig` — template with examples
-** Converted from `{{project}}` placeholders to "template" namespace
-** Added comprehensive comments for how to instantiate
-** Tests grouped by category (lifecycle, operations, strings, errors, version, memory safety, threading)
-** Compiles and passes placeholder test
-* Status: *PASSING* (1 test: `placeholder_test_implementation_required` passes)
+* No test of `EchoResidue` or `TransferMap` equality, nor of
+  `injective_transfer` on its own (they appear only as inputs to other tests).
+* No test of `kind_label` for each of the eight kinds in `test/cases` (only
+  `GPUKind` is checked there). The `UnknownKind` method is exercised, by
+  `test/ext/runtests.jl` (Julia 1.11 or later, in the extension subprocess); the
+  generic `kind_label(::CoprocessorKind)` fallback (`src/Kinds.jl`) is not
+  tested.
+* No test of `observe_null` rejecting an invalid status, as far as the case
+  files show.
+* No property-based or fuzz tests. `tests/fuzz/README.adoc` says no harness is
+  configured.
+* No benchmark of the package. `benches/template_bench.sh` is inherited from
+  the template and does not time Julia code.
+* No formal proof. `verification/proofs/` holds inherited scaffolding; nothing
+  there is a proof about this package, and CNO/OND remain claims
+  (`:unproved` or `:model_checked`).
+* No run on Julia 1.10 of the extension tests, by design of the `[sources]`
+  requirement.
+* The Format and JET jobs were not run for this document, so their current
+  result is unknown here.
 
-=== Benchmarks ✅
+== Next steps
 
-* [x] `benches/template_bench.sh` — 5 benchmark suites
-** Validation script: ~5.8s average (3 runs)
-** Zig build: ~19ms (clean build)
-** Zig tests: ~20ms
-** Workflow validation: ~117ms
-** Template instantiation: ~427ms
-* Formats: human, json, csv
-* Status: *PASSING* (all benchmarks execute)
-
-=== Build System ✅
-
-* [x] `src/interface/ffi/build.zig` — updated for Zig 0.15.2
-** Simplified to test-only configuration
-** Supports both unit tests and integration tests
-** Works with `zig build` without errors
-* Status: *PASSING* (builds successfully)
-
-== Test Results Summary
-
-----
-Validation Script:    PASS (0 errors, 3 warnings)
-Workflow Validation:  PASS (21/21 workflows valid)
-Integration Tests:    PASS (1/1 placeholder test)
-E2E Instantiation:    READY (needs CI confirmation)
-Benchmarks:           PASS (5/5 benchmark suites)
-Build System:         PASS (zig build succeeds)
-----
-
-== CRG C Compliance
-
-* *Coverage*: 6/6 test categories (unit, integration, E2E, workflow, validation, benchmarks)
-* *Documentation*: All test files have SPDX headers + inline documentation
-* *Author Attribution*: Jonathan D.A. Jewell <6759885+hyperpolymath@users.noreply.github.com>
-* *License*: MPL-2.0 on all new files
-* *Automation*: All scripts executable + working
-
-== FLAGGED ISSUES - ALL RESOLVED
-
-* [.line-through]#*Template repo used by ALL new repos has 0 validation tests*# → FIXED: 4 test suites + validation script
-* [.line-through]#*fuzz/placeholder.txt*# → FIXED: replaced with `README.adoc` containing real harness instructions
-* [.line-through]#*No E2E tests for template instantiation*# → FIXED: full E2E test suite
-* [.line-through]#*Zig FFI integration tests are placeholders*# → FIXED: converted to documented template format
-
-== Next Steps (Future Sessions)
-
-* [ ] Integrate test scripts into CI/CD workflows
-* [ ] Generate test coverage reports
-* [ ] Add more specialized benchmarks (memory, threading stress)
-* [ ] Document test instantiation patterns for new repos
-
-== Priority: P0 (COMPLETE) ✅
+* [ ] Add tests for the gaps listed above, then record the new counts here.
+* [ ] Decide whether to measure coverage and, if so, state it with its denominator.
+* [ ] Fill `status/READINESS.adoc` from evidence, then link a grade here.

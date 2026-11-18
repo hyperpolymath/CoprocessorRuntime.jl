@@ -3,24 +3,99 @@
 = Quickstart
 :toc: preamble
 
-Get up and running in 60 seconds.
+Install `CoprocessorRuntime.jl` and record a first launch plan. This is a
+library: nothing runs on a device, and nothing is started.
 
 == Prerequisites
 
-* Git 2.40+
-* just (command runner)
-* Your language toolchain (see Justfile for details)
+* Julia 1.10 or later (`julia = "1.10"` in `Project.toml`).
+* Network access to GitHub. The package is not in the Julia General registry,
+  so it is installed by URL.
 
-== From Template (New Project)
+== Install
+
+[source,julia]
+----
+using Pkg
+Pkg.add(url="https://github.com/hyperpolymath/CoprocessorRuntime.jl")
+----
+
+This resolves package version 0.1.0 from the `main` branch. The package has no
+dependencies of its own.
+
+== First use
+
+[source,julia]
+----
+using CoprocessorRuntime
+
+s = open_session(GPUKind())
+plan = launch_plan(
+    :matmul,
+    [Endpoint(HostRole(), CPUKind()), Endpoint(DeviceRole(), GPUKind())],
+    ResourceGrade(1 << 20, 10_000, 0.0),
+    EchoResidue(collapsing_transfer(:f32_to_f16), "mantissa fibre"),
+)
+local_view = project(plan, DeviceRole())
+@show local_view.kcut local_view.grade_eq local_view.warrant_bound
+
+receipt = issue_receipt(s; warrant = WarrantOnly, claim = "planned")
+@show host_may_claim(receipt)
+
+cno = reset_session!(s)
+@show cno.status
+
+close_session!(s)
+@show isopen(s)
+----
+
+Expected output:
+
+----
+local_view.kcut = :open
+local_view.grade_eq = false
+local_view.warrant_bound = :open
+host_may_claim(receipt) = false
+cno.status = :model_checked
+isopen(s) = false
+----
+
+Read it as follows. The transfer map is collapsing, so the projection does not
+claim the grade equals the global grade (`grade_eq = false`), and K-CUT is not
+claimed (`kcut = :open`). A receipt with `WarrantOnly` warrant is not a factive
+claim. `:model_checked` for the reset means the host-side handle came back
+open with the same id; it is not a device reset and not a proof.
+
+== Optional: AcceleratorGate backends
+
+With `AcceleratorGate.jl` also installed (it is not in General either, so add
+it by URL), the package extension maps a backend to a kind:
+
+[source,julia]
+----
+Pkg.add(url="https://github.com/hyperpolymath/AcceleratorGate.jl")
+using CoprocessorRuntime, AcceleratorGate
+coprocessor_kind(CUDABackend(0))   # GPUKind()
+----
+
+Without `AcceleratorGate` loaded, `coprocessor_kind` has no methods and a call
+is a `MethodError`.
+
+== Run the package's own tests
+
+From a checkout of the repository:
 
 [source,bash]
 ----
-git clone https://github.com/hyperpolymath/rsr-template-repo my-project
-cd my-project
-rm -rf .git && git init -b main
-just repo-init       # interactive placeholder replacement
+julia --project=. -e 'using Pkg; Pkg.test()'
 ----
 
-== Project Structure
+On Julia 1.11 this also runs the extension tests in `test/ext`, which fetch
+`AcceleratorGate` from GitHub. On Julia 1.10 that part is recorded as one
+`Broken` test. See `status/TEST-NEEDS.adoc`.
 
-See README.adoc in the root for the Dual-Track architecture summary.
+== Where next
+
+* `EXPLAINME.adoc` for what each type records and what it does not.
+* `STATE-VISUALIZER.adoc` for the file topology.
+* `README.adoc` at the repository root.
