@@ -1,115 +1,141 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= RSR Template Repo - Explainme
+= CoprocessorRuntime.jl - Explainme
 image:https://img.shields.io/badge/License-MPL_2.0-blue.svg[License: MPL-2.0,link="https://opensource.org/licenses/MPL-2.0"]
 
 :toc:
 :icons: font
 
-This file explains how the key template claims map to real files.
+This file explains what `CoprocessorRuntime.jl` records, which source file holds
+what, and where its claims stop. The `README.adoc` is the short version.
 
-== Central Session Protocol Authority
+== What it is
 
-Claim:
-Session protocols are centrally maintained and not duplicated in this template.
+A host-side contract and evidence layer for coprocessor launches. It models
+host and device roles, resource grades, transfer residues, launch receipts and
+CNO/OND claims. It records launch semantics; it does not run accelerator
+kernels, and it has no dependencies beyond Julia itself (`[deps]` in
+`Project.toml` is empty).
 
-How this is implemented:
+It is a Julia library, not an application. It is installed by URL, not from the
+General registry (see `QUICKSTART.adoc`).
 
-* The local dispatcher (`session/dispatch.sh`) maps canonical commands to central
-  protocol paths in `standards/3-practice/session-management-standards`.
-* Local files (`session/custom-checks.k9`, `session/local-hooks.sh`,
-  `coordination.k9`) are integration-only.
+== What it records
 
-Caveat:
+[cols="1,2,2",options="header"]
+|===
+| Question | Answer in this package | Source
 
-* If `SESSION_STANDARDS_DIR` is unset and no adjacent standards checkout exists,
-  the dispatcher records the command but cannot resolve central checklist paths.
+| Which endpoint am I?
+| `HostRole` / `DeviceRole`, projected out of a `LaunchPlan`
+| `src/Kinds.jl`, `src/Choreography.jl`
 
-== Canonical Command Surface
+| What is the worst-case cost?
+| `ResourceGrade`: bytes, nanoseconds, joules; `tropical_seq` adds, `tropical_alt` takes the maximum
+| `src/Grades.jl`
 
-Claim:
-Template bindings align to one canonical command model.
+| What was lost in the transfer?
+| `EchoResidue` on a `TransferMap` that is, or is not, injective and reversible
+| `src/EchoLoss.jl`
 
-How this is implemented:
+| What may the host claim afterwards?
+| `LaunchReceipt` with a standpoint, a `WarrantKind` and a `sound` flag
+| `src/Receipts.jl`
 
-* `Justfile` provides thin aliases (`intake-repo`, `checkpoint-change`,
-  `verify-maintenance`, `verify-substantial`, `verify-release`, `close-planned`,
-  `close-urgent`, `recover-repo`, `handover-*`).
-* Every alias calls `session/dispatch.sh` with canonical verb-object pairs.
+| Did a reset do nothing, and did a channel reveal nothing?
+| `CNOClaim` and `ONDClaim`, whose `status` is meant to be `:unproved` or `:model_checked`; the constructors accept any `Symbol`, and only `observe_null` rejects other values
+| `src/Nullity.jl`
 
-Caveat:
+| Can one adapter speak every vendor protocol?
+| No: `universal_hub_allowed()` throws `HubCeilingRefusal`
+| `src/Choreography.jl`
+|===
 
-* Recipes are wrappers only. They do not replace protocol content from
-  the central standards repo.
+== Where each piece lives
 
-== Runtime State Is Local
+`src/CoprocessorRuntime.jl` declares the module, the export list and the
+`include` order. The seven files it includes:
 
-Claim:
-Session state is per-repository runtime output, not standards text.
+[cols="1,3",options="header"]
+|===
+| File | Holds
 
-How this is implemented:
+| `Kinds.jl`
+| `Role` (`HostRole`, `DeviceRole`); `CoprocessorKind` (`CPUKind`, `GPUKind`, `NPUKind`, `TPUKind`, `FPGAKind`, `QPUKind`, `DSPKind`, `UnknownKind`); `kind_label`; the method-less function `coprocessor_kind`
 
-* `session/dispatch.sh` writes command and continuity-core capture stubs to
-  `.session/LAST-CANONICAL-COMMAND.md` in the target repository path.
+| `Grades.jl`
+| `ResourceGrade` (rejects negative fields), `tropical_seq`, `tropical_alt`, `dominates`
 
-Caveat:
+| `EchoLoss.jl`
+| `TransferMap`, `EchoResidue`, `injective_transfer`, `collapsing_transfer`
 
-* Runtime files are intentionally lightweight and require human/agent completion.
+| `Sessions.jl`
+| `Session{K}`, `open_session`, `close_session!`, `isopen`
 
-== Template Token Policy
+| `Receipts.jl`
+| `WarrantKind` (`Knowledge`, `Belief`, `WarrantOnly`, `Unsound`), `LaunchReceipt`, `issue_receipt`, `host_may_claim`
 
-Claim:
-Placeholders are explicit template content until initialization.
+| `Nullity.jl`
+| `CNOClaim`, `ONDClaim`, `InverseMeta`, `inversion_of`, `irreversible`, `reset_session!`, `observe_null`
 
-How this is implemented:
+| `Choreography.jl`
+| `Endpoint`, `LaunchPlan`, `launch_plan`, `project`, `projected_grade`, `HubCeilingRefusal`, `universal_hub_allowed`
+|===
 
-* `README.adoc` and bootstrap recipes keep `{{TOKEN}}` placeholders visible.
-* `just init` performs token replacement.
+`ext/AcceleratorGateExt.jl` is a package extension, described below.
+`STATE-VISUALIZER.adoc` shows how these files depend on each other.
 
-Caveat:
+== Reading the claims honestly
 
-* Uninitialized placeholders must not be treated as project-specific truth.
+These rules are in the code, and they are the point of the package:
 
-== Dependency Updates (Dependabot)
+* *A session is a handle.* `open_session` allocates nothing on a device and
+  does not prove a device exists (`src/Sessions.jl`).
+* *Receipts default to unsound.* `issue_receipt` sets `sound = false` unless
+  told otherwise. `host_may_claim` is true only for a `:host` standpoint with
+  `Knowledge` warrant and `sound == true`. A `:device` standpoint with
+  `Knowledge` and no soundness check is refused with an `ArgumentError`
+  ("smuggling") (`src/Receipts.jl`).
+* *CNO and OND are claims, not proofs.* `reset_session!` reports
+  `:model_checked` when the handle came back with the same id and open; that is
+  a host-side handle check, not a device reset. `observe_null` defaults to
+  `:unproved` and accepts only `:unproved` or `:model_checked`
+  (`src/Nullity.jl`).
+* *Unstated energy is not free.* `joules == 0.0` means unstated, and unstated
+  energy does not dominate a stated energy (`src/Grades.jl`).
+* *K-CUT stays open.* `project` always returns `kcut = :open`. It returns
+  `grade_eq = true` only when the plan's transfer map is injective, and
+  otherwise `warrant_bound = :open` (`src/Choreography.jl`).
 
-Claim:
-Dependency bumps land fast and safely, without manual chasing.
+== The AcceleratorGate extension
 
-How this is implemented:
+`AcceleratorGateExt` is loaded by Julia only when `AcceleratorGate.jl` is also
+loaded (`[weakdeps]` and `[extensions]` in `Project.toml`). It adds methods of
+`coprocessor_kind` that map an AcceleratorGate backend type to a
+`CoprocessorKind`, so a session can be opened with
+`open_session(coprocessor_kind(backend))`. It selects nothing and runs nothing.
+Four backends (`PPUBackend`, `MathBackend`, `VPUBackend`, `CryptoBackend`) map
+to `UnknownKind`, because this package has no kind for them. Without
+AcceleratorGate loaded, `coprocessor_kind` has no methods and a call is a
+`MethodError`, on purpose.
 
-* `dependabot.yml` watches the Dependabot-supported ecosystems the estate
-  actually uses: `github-actions`, `cargo`, `mix` (Elixir), `docker`.
-* `dependabot-automerge.yml` auto-merges *every* bump (patch/minor/major,
-  security or routine) **once the required checks are green** — a broken bump
-  fails CI and stays open (you get an email); it never lands on a red `main`.
+== What it is not
 
-Caveat:
+* Not an executor of CUDA, ROCm, Metal or TPU kernels: that is `CUDA.jl`,
+  `AMDGPU.jl`, `Metal.jl` and `KernelAbstractions.jl`.
+* Not a backend selector: that is `AcceleratorGate.jl`.
+* Not a healer of failing kernels: that is `HardwareResilience.jl`.
+* Not a proof of CNO or OND: that is `absolute-zero`. Status here is
+  `:unproved` or `:model_checked`.
+* Not a closure of K-CUT: that conjecture is open in `choreographic-types`.
 
-* Dependabot has **no  or Bun ecosystem**, and `pnpm` only rides under the
-  `npm` ecosystem (itself banned). For this -first estate Dependabot cannot
-  watch the runtime dependencies; the `npm`/`pip` entries are retained only for
-  transitional/legacy manifests and are otherwise inert.  dependency
-  currency is managed via `.json`/`.lock`, not Dependabot.
-* Do **not** add Dependabot as a ruleset *bypass* actor: that lets bumps skip
-  the required checks (secret-scanning, SAST), removing the safety gate and the
-  "it broke" signal. Auto-merge-on-green gives fast merges without it.
+== Around the package
 
-== Julia Registry Packages — Standalone Repo Requirement
-
-Claim:
-If this template is used to create a Julia package, it must remain a standalone repository registered with the Julia package registry.
-
-How this is implemented:
-
-* Julia's package registry (General.jl or other) expects each package to be a standalone GitHub repository with `Project.toml` at the repository root.
-* Installation via `Pkg.add()`, dependency resolution, and automated CI/CD all depend on this canonical structure.
-
-Caveat:
-
-* Do NOT move this repository into a monorepo or subdirectory, as this breaks registry registration and package discoverability.
-* Julia packages published to a registry must each remain a standalone top-level repository (registry registration and package discovery require it).
-* Non-registry Julia packages can be organized differently if they are not published to any registry.
-
+The repository also carries estate scaffolding that is not part of the Julia
+API: the local session bindings in `session/` (see `session/README.adoc`), the
+`Justfile`, CI under `.github/workflows/`, and the machine-readable state under
+`.machine_readable/`. `architecture/REPOSITORY-MAP.adoc` is the generated map
+of the tree.
 
 == License
 
