@@ -55,9 +55,11 @@ in `.github/workflows/` are template-wide estate checks.
 * Every commit must be signed. A ruleset (`.github/rulesets/base.json`)
   requires signatures. See link:../../CONTRIBUTING.adoc[CONTRIBUTING] for how.
 * Pull requests are squash-merged; that ruleset allows no other method.
-* The ruleset's `required_status_checks` list is currently empty, so no
-  check is enforced by GitHub as required. Do not merge over a red Julia CI
-  run regardless.
+* The live ruleset on `main` requires one status check, `scan / gitleaks`
+  (from the Secret Scanner workflow). The checked-in `base.json` lists no
+  required checks, so it does not match the live ruleset; treat the live
+  ruleset as authoritative. `CI/gate` is not a required check today, but do
+  not merge over a red Julia CI run regardless.
 * After a squash-merge, delete the feature branch and start follow-up work from
   the current `main`.
 

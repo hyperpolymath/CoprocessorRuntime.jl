@@ -80,9 +80,12 @@ julia --project=. -e '
   end'
 ----
 
-The last two commands run `Pkg.add`, which edits `Project.toml` in the
-checkout. Run them in a throwaway copy, or restore the file afterwards with
-`git checkout Project.toml`.
+The last two commands run `Pkg.add`, which edits `Project.toml` (and the
+manifest) in the checkout. Run them in a throwaway copy by default, for example
+`git worktree add ../crt-lint HEAD` and run them there, then remove it with
+`git worktree remove ../crt-lint`. If you run them in your working checkout,
+`git checkout Project.toml` restores the file but also discards any uncommitted
+edits you had made to it, so commit or stash those first.
 
 == Project structure
 
