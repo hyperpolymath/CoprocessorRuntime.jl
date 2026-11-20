@@ -23,14 +23,6 @@
 # capability appears below; everything else is `na` and excluded from the
 # denominator.
 #
-# rsr-template-repo is deliberately MAXIMAL: it ships scaffolding for FFI/ABI
-# seams, in-tree formal proofs, a container, a reproducible build, benchmarks,
-# a docs site, and the full governance trio — so a repo scaffolded FROM it can
-# adopt any of them. Its declared set is therefore near-total, which is exactly
-# what makes it the dogfood target (the gate requires Gold on the applicable
-# set). Every capability below is grounded in a file/dir that actually exists
-# in this tree; capabilities it does NOT have (rust, affinescript, mobile,
-# web-ui, api-service, published-package) are omitted so the oracle does not
 # score this repo against modules it does not carry.
 
 [rsr-profile]

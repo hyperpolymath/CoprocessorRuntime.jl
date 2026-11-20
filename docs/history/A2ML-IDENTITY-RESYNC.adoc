@@ -1,0 +1,107 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Template identity removed from the A2ML files, 2026-11-17
+
+This repository was minted from `rsr-template-repo` but kept the template's own
+identity. The deed header and `CLAUDE.md` now state this repository's own
+identity (`CoprocessorRuntime.jl_chora.deed`; the arrival pack is generated
+from it). This record covers the `.a2ml` files that still declared the
+template. It follows the shape of boj-server's `docs/history/A2ML-REMOVED.adoc`.
+
+A2ML is retired. The only edit made to any `.a2ml` file was deleting lines: no
+line was added or changed, no file was created or restored, and nothing was
+converted. Git history keeps the old content; read a file with
+`git show 6ccf6c9:<path>`. Size and sha256 prefix are of the file as it stood
+at 6ccf6c9; the blob id is its git blob.
+
+== No `.a2ml` file was removed
+
+Removing `CLADE.a2ml` and `ECOSYSTEM.a2ml` was tried first and rejected. With
+the files removed, `just validate-rsr`, `scripts/validate-template.sh`, the Must
+clause `six-directory-present` and the coaptation tooling all fail. With
+deletion-only stubs they all pass, except that the coaptation still fails as it
+already did on main (see below). The two files are therefore kept as stubs.
+
+== Content deleted
+
+[cols="4,1,2,2,1,5",options="header"]
+|===
+| Path | Size | sha256 (prefix) | Git blob id | Lines deleted | What was deleted, and where it went
+
+| `.machine_readable/descriptiles/CLADE.a2ml`
+| 3567
+| `374291c947fbe584`
+| `3acb193f1b73`
+| 54
+| The banner "THIS IS rsr-template-repo's OWN IDENTITY", the template's uuid (`a5ea1382-…`), `canonical-name`, `prefixed-name`, the whole `[clade]` block (`rm`, rationale), `[forges]`, `born`, and the template's active phase, since and history entry. This repository's own values are in the deed's `(identity)`, `(forges)`, `(lineage)` and `(status)` clauses; it has no clade. What remains is generic: `primary-forge`, `primary-owner`, `type`, `parent`, `previous-names` and the empty `[status]` fields.
+
+| `.machine_readable/descriptiles/ECOSYSTEM.a2ml`
+| 2729
+| `8680c941f9683eac`
+| `9b2b53706bcd`
+| 39
+| The template's `project`, `type = "repository-template"`, `purpose`, `what-this-is-not`, `[pipeline]` position, chain and notes, `[related-projects]` and the notes for consumers. This repository's values are in the deed's `(ecosystem)` clause. What remains: `ecosystem = "hyperpolymath"` and `coordination = "standards"`.
+
+| `.machine_readable/descriptiles/STATE.a2ml`
+| 4358
+| `fad6192c73ea8dd2`
+| `89c6f4ede6c0`
+| 6
+| "This is the STATE file for rsr-template-repo itself" and the two lines after it, `project`, `name` and `purpose`. This repository's phase and maturity are in the deed's `(status)` and `(maturity)`.
+
+| `.machine_readable/rsr-profile.a2ml`
+| 7616
+| `f62b3b2eb3d603a5`
+| `1b02cb98f701`
+| 8
+| One comment paragraph, "rsr-template-repo is deliberately MAXIMAL…". The `[canon]` block that `dogfood-gate.yml` reads is untouched; the gate's own `canon_key` reader gives the same version and both hashes before and after.
+
+| `.machine_readable/ai/AI.a2ml`
+| 2290
+| `a013f6f89edf499d`
+| `d25039f14476`
+| 1
+| The line "`rsr-template-repo` is treated as a Rhodium Standard Repository…".
+
+| Contractile Xfiles: `intend/Intentfile.a2ml`, `must/Mustfile.a2ml`, `trust/Trustfile.a2ml`, `adjust/Adjustfile.a2ml`, `dust/Dustfile.a2ml`, `bust/Bustfile.a2ml`
+| 3482, 4117, 4047, 2518, 3252, 2567
+| `b5248bb14c9b12d2`, `1efd686e70957332`, `44cb84cef597c43b`, `8faad9ca06500fc0`, `47cb31fdfb0691d8`, `dd6a53e1fc9b1223`
+| `ef74f4529719`, `ddb572ac0922`, `e6eeed57b42a`, `6f01e89f678a`, `3dabca0f74b0`, `c7fec2bccc57`
+| 16, 6, 9, 7, 8, 8
+| The title comment ("… for rsr-template-repo"), the `@abstract:` block that says this is the canonical template, the Intentfile "Purpose" section, the "This repository: rsr-template-repo is the canonical template" comments (Dustfile, Bustfile) and the Trustfile's "operates at trust level" sentence. No `###` clause was touched.
+|===
+
+== Readers, and what they see now
+
+* `build/just/validate.just` (`validate-rsr`), `assess.just`, `groove.just` and `scripts/validate-template.sh` test that `ECOSYSTEM.a2ml` exists. It does, so they pass.
+* The Must clause `six-directory-present` tests that `ECOSYSTEM.a2ml` exists. It does, so it passes.
+* `.github/hooks/validate-deed.sh` and the upstream `deed-ecosystem` validator accept all the edited files.
+* `.machine_readable/coaptation/` reads `CLADE.a2ml`, `ECOSYSTEM.a2ml` and `STATE.a2ml`. Its committed receipt was already stale on main and still is. The stubs lose the facts `clade.*` and `ecosystem.type`, so a fresh run now reports the witness `must.six-directory-present` as refuted and the band as red (it was green fresh on main). This is not run in CI. Moving the coaptation to the deed needs the contractile K9 files moved off the missing `../k9/template-hunt.k9.ncl` first, which is a separate change; once done, the stubs can be deleted.
+
+== Residual mentions left in place
+
+[cols="3,5",options="header"]
+|===
+| Path | Why it stays
+
+| `.machine_readable/coaptation/receipts/latest.a2ml`
+| A historical receipt (`repo = "rsr-template-repo"`). It is generated output, not a declaration.
+
+| `.machine_readable/bot_directives/rra.a2ml` (`(file "rsr-template-repo_chora.deed")`)
+| A stale file name in the root allow-list. Substituting is not allowed, and deleting the line would drop the deed from an allow-list read by an external bot that cannot be seen from this repository. Needs the owner.
+
+| `.machine_readable/bot_directives/methodology.a2ml` (`reject-if-contains`)
+| A detection rule that names the template on purpose.
+
+| `contractiles/*/*.manifest.a2ml` (`context = "… canonical template in rsr-template-repo."`)
+| Names the template as the source of the verb definition (upstream attribution), inside a required field.
+
+| `contractiles/dust/Dustfile.a2ml` and `bust/Bustfile.a2ml` clauses (`no references to rsr-template-repo…`, drift and injection probes)
+| They are clauses about the template. Deleting one changes the coaptation clause set.
+|===
+
+== Where the identity went
+
+* `CoprocessorRuntime.jl_chora.deed`: header ids; `(identity)`, `(forges)`, `(lineage)`, `(status)`, `(maturity)`, `(ecosystem)` with its `(related …)` entries; a minimal `(anchor)`; `(ply)` at the template's text. The clade is left unassigned, since chora-registry is authoritative for it.
+* `CLAUDE.md` "This repo" block: generated by `just claude-md` from the deed.
+* Non-A2ML files that named the template as this repo (`CONTRIBUTING.adoc`, `.github/{CONTRIBUTING,SECURITY,CODE_OF_CONDUCT}.md`, `build/guix.scm`, `.machine_readable/contractiles/Justfile`, `docs/onboarding/*`, the Justfile echoes and the SonarCloud comment): rewritten by the template's own self-name rule from `build/just/repo-init.just`, with every hunk read.

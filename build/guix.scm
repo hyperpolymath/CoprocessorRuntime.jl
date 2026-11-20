@@ -9,12 +9,12 @@
              (gnu packages bash))
 
 (package
-  (name "rsr-template-repo")
+  (name "CoprocessorRuntime.jl")
   (version "0.1.0")
   (source #f)
   (build-system gnu-build-system)
   (inputs (list coreutils bash))
-  (synopsis "rsr-template-repo")
-  (description "rsr-template-repo — part of the hyperpolymath ecosystem.")
-  (home-page "https://github.com/hyperpolymath/rsr-template-repo")
+  (synopsis "CoprocessorRuntime.jl")
+  (description "CoprocessorRuntime.jl — part of the hyperpolymath ecosystem.")
+  (home-page "https://github.com/hyperpolymath/CoprocessorRuntime.jl")
   (license (@ (guix licenses) mpl2.0)))
